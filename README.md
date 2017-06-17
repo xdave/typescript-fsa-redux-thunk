@@ -88,4 +88,4 @@ export const doSomethingWorker = bindThunkAction(doSomething,
 ```
 
 The error type is always a `throw`-able error.  It's always re-thrown after
-the `.done()` async action creator is called so you can do what you will with it.
+the `.failed()` async action creator is called so you can do what you will with it.
