@@ -1,4 +1,4 @@
-# [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk
+# [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk [![Build Status][travis-image]][travis-url]
 
 ## Installation
 
