@@ -1,5 +1,4 @@
-# [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk
-[![Build Status](https://travis-ci.org/xdave/typescript-fsa-redux-thunk.png)](https://travis-ci.org/xdave/typescript-fsa-redux-thunk)
+# [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk [![npm version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
 
 ## Installation
 
@@ -90,3 +89,8 @@ export const doSomethingWorker = bindThunkAction(doSomething,
 
 The error type is always a `throw`-able error.  It's always re-thrown after
 the `.failed()` async action creator is called so you can do what you will with it.
+
+[npm-image]: https://badge.fury.io/js/typescript-fsa-redux-thunk.svg
+[npm-url]: https://badge.fury.io/js/typescript-fsa-redux-thunk
+[travis-image]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk.svg?branch=master
+[travis-url]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk
