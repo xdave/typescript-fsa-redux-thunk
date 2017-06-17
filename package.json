@@ -1,0 +1,48 @@
+{
+  "name": "typescript-fsa-redux-thunk",
+  "version": "1.0.0",
+  "description": "TypeScript FSA utilities for redux-thunk",
+  "keywords": [
+    "redux-thunk",
+    "typescript",
+    "action",
+    "action creator"
+  ],
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "es",
+    "lib"
+  ],
+  "repository": "xdave/typescript-fsa-redux-thunk",
+  "scripts": {
+    "clean": "rimraf lib es",
+    "lint": "tslint -c tslint.json src/**/*.ts tests/**/*.ts",
+    "test": "ts-node -P tsconfig.tests.json node_modules/.bin/tape tests/*.ts",
+    "test:watch": "ts-node -P tsconfig.tests.json node_modules/.bin/tape-watch tests/*.ts",
+    "build:es": "tsc",
+    "build:lib": "tsc -p tsconfig.lib.json",
+    "build": "npm run build:es && npm run build:lib",
+    "prepublish": "npm run clean && npm run lint && npm run test && npm run build"
+  },
+  "author": "Dave Gradwell <deft.productions@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/redux-mock-store": "^0.0.8",
+    "@types/tape": "^4.2.30",
+    "redux-mock-store": "^1.2.3",
+    "rimraf": "^2.6.1",
+    "tape": "^4.6.3",
+    "tape-watch": "^2.3.0",
+    "ts-node": "^3.0.6",
+    "tslint": "^5.4.3",
+    "typescript": "^2.3.4"
+  },
+  "dependencies": {
+    "redux": "^3.7.0",
+    "redux-thunk": "^2.2.0",
+    "tslib": "^1.7.1",
+    "typescript-fsa": "^2.3.0"
+  }
+}
