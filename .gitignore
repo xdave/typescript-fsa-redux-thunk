@@ -10,5 +10,5 @@ npm-*.log
 .DS_Store
 
 # build
-es
-lib
+# es
+# lib
