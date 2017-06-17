@@ -82,7 +82,9 @@ export const doSomethingWorker = bindThunkAction(doSomething,
       throw new Error(`Server error: ${res.status} ${res.statusText}`);
     }
 
-    const bar = await res.text() as Promise<number>;
+    const text = await res.text();
+    const bar = parseInt(text, 10);
+
     return { bar };
   });
 ```
