@@ -1,4 +1,6 @@
 # [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk [![npm version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
+[![Dependency Status](https://david-dm.org/xdave/typescript-fsa-redux-thunk.svg?style=flat)](https://david-dm.org/xdave/typescript-fsa-redux-thunk)
+[![devDependency Status](https://david-dm.org/xdave/typescript-fsa-redux-thunk/dev-status.svg?style=flat)](https://david-dm.org/xdave/typescript-fsa-redux-thunk#info=devDependencies)
 
 ## Installation
 
