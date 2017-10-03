@@ -5,7 +5,7 @@
 ## Installation
 
 ```
-npm install --save typescript-fsa-redux-thunk@2.0.0-beta.1
+npm install --save typescript-fsa-redux-thunk@beta
 ```
 
 ## API
