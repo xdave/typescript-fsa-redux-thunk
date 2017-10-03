@@ -1,4 +1,9 @@
-# [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk [![npm version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![codecov](https://codecov.io/gh/xdave/typescript-fsa-redux-thunk/branch/v2/graph/badge.svg)](https://codecov.io/gh/xdave/typescript-fsa-redux-thunk)
+# [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk
+[![npm (tag)](https://img.shields.io/npm/v/typescript-fsa-redux-thunk/beta.svg)](https://github.com/xdave/typescript-fsa-redux-thunk)
+[![npm](https://img.shields.io/npm/l/typescript-fsa-redux-thunk.svg)]()
+[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/xdave/typescript-fsa-redux-thunk/v2.svg)](https://github.com/xdave/typescript-fsa-redux-thunk)
+[![Build Status][travis-image]][travis-url]
+[![codecov](https://codecov.io/gh/xdave/typescript-fsa-redux-thunk/branch/v2/graph/badge.svg)](https://codecov.io/gh/xdave/typescript-fsa-redux-thunk)
 
 ### NOTE: There's breaking changes from 1.x.  Read on to find out more and check the notes at the bottom for more info.
 
