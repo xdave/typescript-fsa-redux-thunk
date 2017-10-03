@@ -1,36 +1,74 @@
-import { Dispatch } from "redux";
-import { ThunkAction } from "redux-thunk";
-import { ThunkActionCreators } from "typescript-fsa";
+import { Dispatch } from 'redux';
+import {
+	Action,
+	AsyncActionCreators,
+	ActionCreatorFactory,
+	Failure,
+	Success as ActionSuccess
+} from 'typescript-fsa';
 
-declare module "typescript-fsa" {
-  export interface ThunkActionCreators<State, P, S, E>
-    extends AsyncActionCreators<P, S, E> {
-  }
-
-  export interface ActionCreatorFactory {
-    async<S, P, R, E>(prefix?: string, commonMeta?: Meta)
-      : ThunkActionCreators<S, P, R, E>;
-  }
+declare module 'typescript-fsa' {
+	export interface ActionCreatorFactory {
+		async<State, Params, Result, Err>(prefix?: string, commonMeta?: Meta)
+		: ThunkActionCreators<State, Params, Result, Err>;
+	}
 }
 
-export type Thunk<R, S> = ThunkAction<Promise<R>, S, any>;
+export interface Success<Params, Result> extends ActionSuccess<Params, Result> {
+	error?: boolean;
+}
 
-export type AsyncWorker<R, P, S, T = any> =
-  (params: P, dispatch: Dispatch<S>, getState: () => S, extra: T) => Promise<R>;
+export interface ThunkActionCreators<State, Params, Result, Err>
+	extends AsyncActionCreators<Params, Result, Err> {}
 
-export const bindThunkAction = <S, P, R, E>(
-  asyncAction: ThunkActionCreators<S, P, R, E>,
-  worker: AsyncWorker<R, P, S>,
-) => (params: P): Thunk<R, S> => async (dispatch, getState, extra) => {
-  dispatch(asyncAction.started(params));
-  try {
-    const result = await worker(params, dispatch, getState, extra);
-    dispatch(asyncAction.done({ params, result }));
-    return result;
-  } catch (error) {
-    dispatch(asyncAction.failed({ params, error }));
-    throw error;
-  }
-};
+export type AsyncWorker<State, Params, Result, Extra = any> = (
+	params: Params,
+	dispatch: Dispatch<State>,
+	getState: () => State,
+	extra: Extra
+) => Result;
+
+export const isPromise = <T>(thing: T | Promise<T>): thing is Promise<T> =>
+	thing instanceof Promise;
+
+export const isFailure = <Params, Result, Err>(
+	action: Action<Success<Params, Result> | Failure<Params, Err>>
+): action is Action<Failure<Params, Err>> => !!action.error;
+
+export const isSuccess = <Params, Result, Err>(
+	action: Action<Success<Params, Result> | Failure<Params, Err>>
+): action is Action<Success<Params, Result>> => !!!action.error;
+
+export const bindThunkAction = <State, Params, Result, Err, Extra = any>(
+	asyncAction: ThunkActionCreators<State, Params, Result, Err>,
+	worker: AsyncWorker<State, Params, Result, Extra>
+) => (params?: Params) =>
+		(dispatch: Dispatch<State>, getState: () => State, e: Extra) => {
+			dispatch(asyncAction.started(params as Params));
+			try {
+				const result = worker(params as Params, dispatch, getState, e);
+				if (isPromise(result)) {
+					return result
+						.then(r =>
+							dispatch(asyncAction.done({
+								params: params as Params, result: r
+							})) as Action<Success<Params, Result>>
+						).catch(error =>
+							dispatch(asyncAction.failed({
+								params: params as Params, error
+							})) as Action<Failure<Params, Err>>
+						);
+				}
+				return dispatch(asyncAction.done({
+					params: params as Params,
+					result
+				}));
+			} catch (error) {
+				return dispatch(asyncAction.failed({
+					params: params as Params,
+					error
+				}));
+			}
+		};
 
 export default bindThunkAction;

@@ -1,17 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es2015",
-    "lib": ["es2015"],
-    "moduleResolution": "node",
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["esnext"],
     "declaration": true,
-    "declarationDir": "es",
-    "outDir": "es",
+    "declarationDir": "lib",
+    "outDir": "lib",
     "strict": true,
-    "importHelpers": true,
     "sourceMap": true
   },
-  "files": [
-    "src/index.ts"
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "src/index.spec.ts"
   ]
 }

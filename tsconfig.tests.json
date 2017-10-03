@@ -1,13 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "lib": ["es2015"],
-    "moduleResolution": "node",
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true
-  },
-  "include": [
-    "tests/*.ts"
-  ]
+    "target": "esnext",
+    "module": "commonjs",
+    "lib": ["esnext"],
+    "strict": true
+  }
 }

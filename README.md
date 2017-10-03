@@ -1,32 +1,53 @@
 # [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk [![npm version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
 
+### NOTE: There's breaking changes from 1.x.  Read on to find out more and check the notes at the bottom for more info.
+
 ## Installation
 
 ```
-npm install --save xdave/typescript-fsa-redux-thunk
+npm install --save typescript-fsa-redux-thunk@2.0.0-beta.1
 ```
 
 ## API
 
-### `bindThunkAction(actionCreators: AsyncActionCreators | ThunkActionCreators): ThunkAction`
+### `isPromise(thing: T | Promise<T>): thing is Promise<T> (boolean)`
+
+This is a type assertion predicate which can be used to cast something to the
+proper Promise type (if you think that it might be) or, if negated, will cast
+away a possible promise to a non-promise.  Could be useful to you when dealing
+with the return type of the thunks -- which could be either.
+
+### `isSuccess(action: Action): action is Action<Success<P, S>> (boolean)`
+
+This is useful to cast the result of the thunk dispatch to a Success Action if
+it is one.  This will provide the proper shape for the `payload` key to access
+the result.
+
+### `isFailure(action: Action): action is Action<Failure<P, E>> (boolean)`
+
+This is useful to cast the result of the thunk dispatch to a Failure Action if
+it is one.  This will provide the proper shape for the `payload` key to access
+the error.
+
+### `bindThunkAction(actionCreators: AsyncActionCreators | ThunkActionCreators): ActionCreator`
 
 Creates redux-thunk that wraps the target async actions.
-Resulting thunk dispatches `started` action once started and `done`/`failed`
-upon finish.
+Resulting thunk dispatches `started` action once it is started and
+`done`/`failed` upon finish.
 
 **Example:**
 
 ```ts
 // actions.ts
 import actionCreatorFactory from 'typescript-fsa';
-import { bindThunkAction } from 'typescript-fsa-redux-thunk';
+import { bindThunkAction, isSuccess, isFailure } from 'typescript-fsa-redux-thunk';
 
 const actionCreator = actionCreatorFactory();
 
 // specify parameters and result shapes as generic type arguments
 export const doSomething =
-  actionCreator.async<{ foo: string },   // parameter type
-                      { bar: number }    // result type
+  actionCreator.async<{ foo: string },          // parameter type
+                      Promise<{ bar: number }>  // result type
                      >('DO_SOMETHING');
 
 export const doSomethingWorker = bindThunkAction(doSomething,
@@ -42,13 +63,20 @@ export const doSomethingWorker = bindThunkAction(doSomething,
     const bar = await res.text() as Promise<number>;
     return { bar };
   });
-
-// somewhere else
-...
-  // works just like a regular redux-thunk
-  const result = await store.dispatch(doSomethingWorker({ foo: 'blah' }));
-
-...
+```
+... **somewhere else:**
+```ts
+// works just like a regular redux-thunk
+// EXCEPT that it returns the resulting flux action object
+// And you must check the return type
+const action = await store.dispatch(doSomethingWorker({ foo: 'blah' }));
+if (isSuccess(action)) {
+  // do something with action.payload.result ...
+}
+// or
+if (isFailure(action)) {
+  // do something with action.payload.error (ie. throw, etc) ...
+}
 ```
 
 You can also specify the type of your redux store's state; however, in this
@@ -57,10 +85,10 @@ action creator factory, you need to specify four generic type arguments, for exa
 
 ```ts
 export const doSomething =
-actionCreator.async<{ baz: boolean }   // redux store state type
-                    { foo: string },   // parameter type
-                    { bar: number },   // result type
-                    Error              // error type
+actionCreator.async<{ baz: boolean }          // redux store state type
+                    { foo: string },          // parameter type
+                    Promise<{ bar: number }>, // result type
+                    Error                     // error type
                     >('DO_SOMETHING');
 
 export const doSomethingWorker = bindThunkAction(doSomething,
@@ -89,8 +117,39 @@ export const doSomethingWorker = bindThunkAction(doSomething,
   });
 ```
 
-The error type is always a `throw`-able error.  It's always re-thrown after
-the `.failed()` async action creator is called so you can do what you will with it.
+Whereas in version 1.x, the error type was always re-thrown after
+the `.failed()` async action creator was called, in version 2.x, it is not.
+
+**You are responsible for checking for the error in the calling code and altering**
+**your execution path(s) upon failure.**
+
+Another breaking change from 1.x is the result type is not always assumed to be
+a Promise.  If you want the result to be a promise, you must specify the type to
+be one.  ie: `Promise<T>`, rather than just `T`.
+
+**If your thunk's Result type is not a Promise, example:**
+```ts
+import actionCreatorFactory from 'typescript-fsa';
+import { bindThunkAction, isPromise, isSuccess } from 'typescript-fsa-redux-thunk';
+export const doSomething =
+  actionCreator.async<{ baz: boolean } // redux store state type
+                      { foo: string }, // parameter type
+                      { bar: number }, // result type
+                      Error            // error type
+                      >('DO_SOMETHING');
+export const doSomethingWorker = bindThunkAction(doSomething, params => {
+  // do something with params...
+
+  return { bar: 5 };
+});
+```
+... **elsewhere:**
+```ts
+const action = store.dispatch(doSomething({ foo: 'no promises' }));
+if (!isPromise(action) && isSuccess(action)) {
+  // do something with action.payload.result ...
+}
+```
 
 [npm-image]: https://badge.fury.io/js/typescript-fsa-redux-thunk.svg
 [npm-url]: https://badge.fury.io/js/typescript-fsa-redux-thunk
