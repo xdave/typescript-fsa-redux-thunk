@@ -3,17 +3,21 @@ import { Middleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import configureStore, { MockStore } from 'redux-mock-store';
 import factory from 'typescript-fsa';
+import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import thunk, { isPromise, isFailure, isSuccess } from '.';
 
 const { expect } = chai;
 
+const fakeError = new Error('Fake Error');
 
-interface S { foo: string; }
+interface S {
+	foo: string;
+	updating?: boolean;
+	error?: Error;
+}
+
 interface P { param: number; }
 type R = string;
-
-const initial: S = { foo: 'test' };
-const fakeError = new Error('Fake Error');
 
 const create = factory('test');
 
@@ -22,7 +26,7 @@ const successTest = thunk(successTestA, () => { /* noop */ });
 const failureTestT = create.async<undefined, undefined, Error>('failure');
 const failureTest = thunk(successTestA, () => { throw fakeError; });
 
-const test1A = create.async<S, P, Promise<R>, Error>('test1');
+const test1A = create.async<S, P, R, Error>('test1');
 const test1 = thunk(test1A, async ({ param }) => {
 	if (param === 2) {
 		throw fakeError;
@@ -36,7 +40,7 @@ const test2 = thunk(test2A, () => '');
 const test3A = create.async<S, undefined, R, Error>('test3');
 const test3 = thunk(test3A, () => { throw fakeError; });
 
-const test4A = create.async<S, P, Promise<R>, Error>('test4');
+const test4A = create.async<S, P, R, Error>('test4');
 const test4 = thunk(test4A, async ({ param }, dispatch, getState) => {
 	const one = await dispatch(test1({ param }));
 	if (isSuccess(one)) {
@@ -52,6 +56,25 @@ const test4 = thunk(test4A, async ({ param }, dispatch, getState) => {
 	}
 	return 'Should not get here';
 });
+
+const initial: S = { foo: 'test' };
+
+const reducer = reducerWithInitialState(initial)
+	.case(test4A.started, state => ({
+		...state,
+		updating: true
+	}))
+	.case(test4A.failed, (state, { error }) => ({
+		...state,
+		updating: false,
+		error
+	}))
+	.case(test4A.done, (state, { result: foo }) => ({
+		...state,
+		updating: false,
+		foo
+	}))
+	.build();
 
 describe('typescript-fsa-redux-thunk', () => {
 	let middleware: Middleware[] = [];
@@ -107,8 +130,8 @@ describe('typescript-fsa-redux-thunk', () => {
 				}
 			});
 		});
-		it('done', () => {
-			const promise = Promise.resolve('');
+		it('done', async () => {
+			const promise = await Promise.resolve('');
 			const result = store.dispatch(test1A.done({
 				params: { param: 1 },
 				result: promise
@@ -259,6 +282,29 @@ describe('typescript-fsa-redux-thunk', () => {
 					}
 				}
 			]);
+		});
+
+		it('reducer test', async () => {
+			const result = await store.dispatch(test4({ param: 1 }));
+
+			const [started, done] = store.getActions().filter(action =>
+					action.type.includes('test4'));
+
+			const beforeState = store.getState();
+			expect(beforeState).to.eql(initial);
+
+			const startedState = reducer(beforeState, started);
+			expect(startedState).to.eql({
+				...beforeState,
+				updating: true
+			});
+
+			const doneState = reducer(startedState, done);
+			expect(doneState).to.eql({
+				...startedState,
+				updating: false,
+				foo: 'This is a test.'
+			});
 		});
 	});
 });

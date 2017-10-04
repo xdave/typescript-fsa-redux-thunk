@@ -51,8 +51,8 @@ const actionCreator = actionCreatorFactory();
 
 // specify parameters and result shapes as generic type arguments
 export const doSomething =
-  actionCreator.async<{ foo: string },          // parameter type
-                      Promise<{ bar: number }>  // result type
+  actionCreator.async<{ foo: string }, // parameter type
+                      { bar: number }  // result type
                      >('DO_SOMETHING');
 
 export const doSomethingWorker = bindThunkAction(doSomething,
@@ -90,10 +90,10 @@ action creator factory, you need to specify four generic type arguments, for exa
 
 ```ts
 export const doSomething =
-actionCreator.async<{ baz: boolean }          // redux store state type
-                    { foo: string },          // parameter type
-                    Promise<{ bar: number }>, // result type
-                    Error                     // error type
+actionCreator.async<{ baz: boolean } // redux store state type
+                    { foo: string }, // parameter type
+                    { bar: number }, // result type
+                    Error            // error type
                     >('DO_SOMETHING');
 
 export const doSomethingWorker = bindThunkAction(doSomething,
@@ -128,9 +128,10 @@ the `.failed()` async action creator was called, in version 2.x, it is not.
 **You are responsible for checking for the error in the calling code and altering**
 **your execution path(s) upon failure.**
 
-Another breaking change from 1.x is the result type is not always assumed to be
-a Promise.  If you want the result to be a promise, you must specify the type to
-be one.  ie: `Promise<T>`, rather than just `T`.
+Another (sort of) breaking change from 1.x is the result type is not always
+assumed to be a Promise.  If you want the result to be a promise, just return
+one from your worker function; but continue to specify the result as `T` rather
+than `Promise<T>` (same as 1.x).
 
 **If your thunk's Result type is not a Promise, example:**
 ```ts
@@ -156,7 +157,5 @@ if (!isPromise(action) && isSuccess(action)) {
 }
 ```
 
-[npm-image]: https://badge.fury.io/js/typescript-fsa-redux-thunk.svg
-[npm-url]: https://badge.fury.io/js/typescript-fsa-redux-thunk
-[travis-image]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk.svg?branch=master
+[travis-image]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk.svg?branch=v2
 [travis-url]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk
