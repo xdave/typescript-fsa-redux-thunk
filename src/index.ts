@@ -4,7 +4,7 @@ import {
 	AsyncActionCreators,
 	ActionCreatorFactory,
 	Failure,
-	Success as ActionSuccess
+	Success
 } from 'typescript-fsa';
 
 declare module 'typescript-fsa' {
@@ -12,10 +12,6 @@ declare module 'typescript-fsa' {
 		async<State, Params, Result, Err>(prefix?: string, commonMeta?: Meta)
 		: ThunkActionCreators<State, Params, Result, Err>;
 	}
-}
-
-export interface Success<Params, Result> extends ActionSuccess<Params, Result> {
-	error?: boolean;
 }
 
 export interface ThunkActionCreators<State, Params, Result, Err>
