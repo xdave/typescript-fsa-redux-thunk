@@ -1,6 +1,6 @@
 {
   "name": "typescript-fsa-redux-thunk",
-  "version": "2.0.0-beta.4",
+  "version": "2.0.0-beta.5",
   "description": "TypeScript FSA utilities for redux-thunk",
   "keywords": [
     "redux",
@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/chai": "^4.0.4",
     "@types/mocha": "^2.2.43",
-    "@types/node": "^8.0.31",
+    "@types/node": "^8.0.32",
     "@types/redux-mock-store": "^0.0.11",
     "chai": "^4.1.2",
     "codecov": "^2.3.0",

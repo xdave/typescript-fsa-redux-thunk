@@ -1,4 +1,5 @@
 import { Dispatch } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 import {
 	Action,
 	AsyncActionCreators,
@@ -9,8 +10,10 @@ import {
 
 declare module 'typescript-fsa' {
 	export interface ActionCreatorFactory {
-		async<State, Params, Result, Err>(prefix?: string, commonMeta?: Meta)
-		: ThunkActionCreators<State, Params, Result, Err>;
+		async<State, Params, Result, Err>(
+			prefix?: string,
+			commonMeta?: Meta
+		): ThunkActionCreators<State, Params, Result, Err>;
 	}
 }
 
@@ -26,8 +29,7 @@ export type AsyncWorker<State, Params, Result, Extra = any> = (
 
 export const isPromise = <T>(
 	thing?: T | Promise<T> | void
-): thing is Promise<T> =>
-	thing instanceof Promise;
+): thing is Promise<T> => thing instanceof Promise;
 
 export const isFailure = <Params, Result, Err>(
 	action?: Action<Success<Params, Result> | Failure<Params, Err>>
@@ -36,6 +38,10 @@ export const isFailure = <Params, Result, Err>(
 export const isSuccess = <Params, Result, Err>(
 	action?: Action<Success<Params, Result> | Failure<Params, Err>>
 ): action is Action<Success<Params, Result>> => !!action && !!!action.error;
+
+export const thunkToAction = <Result, State, Extra>(
+	thunk: ThunkAction<Result, State, Extra>
+) => thunk as any as Result;
 
 export const bindThunkAction = <State, Params, Result, Err, Extra = any>(
 	asyncAction: ThunkActionCreators<State, Params, Result, Err>,
@@ -57,12 +63,12 @@ export const bindThunkAction = <State, Params, Result, Err, Extra = any>(
 				return dispatch(asyncAction.done({
 					params: params as Params,
 					result: result as Result
-				})) as Action<Success<Params, Result>>;
+				}));
 			} catch (error) {
 				return dispatch(asyncAction.failed({
 					params: params as Params,
 					error
-				})) as Action<Failure<Params, Err>>;
+				}));
 			}
 		};
 
