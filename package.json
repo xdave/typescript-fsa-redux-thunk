@@ -1,6 +1,6 @@
 {
   "name": "typescript-fsa-redux-thunk",
-  "version": "2.0.0-beta.5",
+  "version": "2.0.0-beta.6",
   "description": "TypeScript FSA utilities for redux-thunk",
   "keywords": [
     "redux",
@@ -22,7 +22,7 @@
     "lint": "tslint --type-check --project tsconfig.json -c tslint.json",
     "test": "cross-env TS_NODE_PROJECT=tsconfig.tests.json nyc mocha",
     "test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts",
-    "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
+    "posttest": "test $CI && codecov -f coverage/*.json || true",
     "build:lib": "tsc",
     "build": "npm -s run build:lib"
   },

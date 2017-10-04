@@ -34,12 +34,13 @@ This is useful to cast the result of the thunk dispatch to a Failure Action if
 it is one.  This will provide the proper shape for the `payload` key to access
 the error.
 
-## `thunkToAction(thunk: ThunkAction<Result, State, Extra>): Result;`
+### `thunkToAction(thunk: (params) => ThunkAction<Result, State, Extra>): (params) => Result;`
 
 Another useful cast function that can help when attempting to extract the return
-value out of your action when using `bindActionCreators` with typescript. If the
-action has been pre-bound to dispatch, then all we want back is the return value
-(the action object). Coming soon: an example.
+value out of your async action creator.  If the action is being pre-bound to
+dispatch, then all we want back is the return value (the action object).
+Coming soon: an example.  TL;DR: pass your async action creator into this before
+passing it to `bindActionCreators` or the `mapDispatchToProps` object (react-redux).
 
 ### `bindThunkAction(actionCreators: AsyncActionCreators | ThunkActionCreators): ActionCreator`
 

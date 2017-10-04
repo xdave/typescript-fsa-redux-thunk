@@ -39,9 +39,9 @@ export const isSuccess = <Params, Result, Err>(
 	action?: Action<Success<Params, Result> | Failure<Params, Err>>
 ): action is Action<Success<Params, Result>> => !!action && !!!action.error;
 
-export const thunkToAction = <Result, State, Extra>(
-	thunk: ThunkAction<Result, State, Extra>
-) => thunk as any as Result;
+export const thunkToAction = <State, Params, Result, Err>(
+	thunk: (params?: Params) => ThunkAction<Result, State, any>
+) => thunk as any as (params?: Params) => Result;
 
 export const bindThunkAction = <State, Params, Result, Err, Extra = any>(
 	asyncAction: ThunkActionCreators<State, Params, Result, Err>,
