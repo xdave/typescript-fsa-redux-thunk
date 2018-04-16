@@ -50,6 +50,7 @@
 			}
 		],
 		"no-submodule-imports": false,
-		"no-object-literal-type-assertion": false
+		"no-object-literal-type-assertion": false,
+		"no-implicit-dependencies": false
 	}
 }

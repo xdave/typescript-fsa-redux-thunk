@@ -4,7 +4,7 @@ import thunkMiddleware from 'redux-thunk';
 import configureStore, { MockStore } from 'redux-mock-store';
 import factory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
-import thunk, { isPromise, isFailure, isSuccess } from '.';
+import thunk, { thunkToAction, asyncFactory } from '.';
 
 const { expect } = chai;
 
@@ -20,56 +20,49 @@ interface P { param: number; }
 type R = string;
 
 const create = factory('test');
+const createAsync = asyncFactory<S>(create);
 
-const successTestA = create.async<undefined, undefined>('success');
-const successTest = thunk(successTestA, () => { /* noop */ });
-const failureTestT = create.async<undefined, undefined, Error>('failure');
-const failureTest = thunk(successTestA, () => { throw fakeError; });
+const successTest = createAsync('success', () => { /* noop */ });
+const failureTest = createAsync('failure', () => { throw fakeError; });
 
-const test1A = create.async<S, P, R, Error>('test1');
-const test1 = thunk(test1A, async ({ param }) => {
+const test1 = createAsync<P, R>('test1', async ({ param }) => {
 	if (param === 2) {
 		throw fakeError;
 	}
 	return '';
 });
 
-const test2A = create.async<S, undefined, R, Error>('test2');
-const test2 = thunk(test2A, () => '');
+const test2 = createAsync('test2', () => '');
 
-const test3A = create.async<S, undefined, R, Error>('test3');
-const test3 = thunk(test3A, () => { throw fakeError; });
+const test3 = createAsync('test3', () => { throw fakeError; });
 
-const test4A = create.async<S, P, R, Error>('test4');
-const test4 = thunk(test4A, async ({ param }, dispatch, getState) => {
-	const one = await dispatch(test1({ param }));
-	if (isSuccess(one)) {
-		if (isSuccess(await dispatch(test1({ param: one.payload.params.param })))) {
-			const two = dispatch(test2());
-			if (!isPromise(two) && isSuccess(two)) {
-				const three = dispatch(test3());
-				if (!isPromise(three) && isFailure(three)) {
-					return 'This is a test.';
-				}
-			}
+const test4 = createAsync<P, R>(
+	'test4',
+	async ({ param }, dispatch, getState) => {
+		const one = await dispatch(test1.action({ param }));
+		const two = await dispatch(test2.action());
+		try {
+			const three = await dispatch(test3.action());
+		} catch (err) {
+			// noop
 		}
+		return 'This is a test.';
 	}
-	return 'Should not get here';
-});
+);
 
 const initial: S = { foo: 'test' };
 
 const reducer = reducerWithInitialState(initial)
-	.case(test4A.started, state => ({
+	.case(test4.async.started, state => ({
 		...state,
 		updating: true
 	}))
-	.case(test4A.failed, (state, { error }) => ({
+	.case(test4.async.failed, (state, { error }) => ({
 		...state,
 		updating: false,
 		error
 	}))
-	.case(test4A.done, (state, { result: foo }) => ({
+	.case(test4.async.done, (state, { result: foo }) => ({
 		...state,
 		updating: false,
 		foo
@@ -84,40 +77,19 @@ describe('typescript-fsa-redux-thunk', () => {
 	beforeEach(() => {
 		middleware = [thunkMiddleware];
 		createMockStore = configureStore(middleware);
-		store = createMockStore(initial) as MockStore<S>;
-	});
-
-	describe('type assertion helpers', () => {
-		it('isPromise()', () => {
-			expect(isPromise(Promise.resolve('test'))).to.be.true;
-			expect(isPromise('test')).to.be.false;
-		});
-
-		it('isSuccess()', async () => {
-			const success = await store.dispatch(successTest());
-			expect(isSuccess(success)).to.be.true;
-			const failure = await store.dispatch(failureTest());
-			expect(isSuccess(failure)).to.be.false;
-		});
-
-		it('isFailure()', async () => {
-			const failure = await store.dispatch(failureTest());
-			expect(isFailure(failure)).to.be.true;
-			const success = await store.dispatch(successTest());
-			expect(isFailure(success)).to.be.false;
-		});
+		store = createMockStore(initial);
 	});
 
 	describe('ThunkActionCreators', () => {
 		it('started', () => {
-			const result = store.dispatch(test1A.started({ param: 1 }));
+			const result = store.dispatch(test1.async.started({ param: 1 }));
 			expect(result).to.eql({
 				type: 'test/test1_STARTED',
 				payload: { param: 1 }
 			});
 		});
 		it('failed', () => {
-			const result = store.dispatch(test1A.failed({
+			const result = store.dispatch(test1.async.failed({
 				params: { param: 1 },
 				error: fakeError
 			}));
@@ -132,7 +104,7 @@ describe('typescript-fsa-redux-thunk', () => {
 		});
 		it('done', async () => {
 			const promise = await Promise.resolve('');
-			const result = store.dispatch(test1A.done({
+			const result = store.dispatch(test1.async.done({
 				params: { param: 1 },
 				result: promise
 			}));
@@ -145,7 +117,7 @@ describe('typescript-fsa-redux-thunk', () => {
 			});
 		});
 		it('full dispatch (success)', async () => {
-			const result = await store.dispatch(test1({ param: 1 }));
+			const result = await store.dispatch(test1.action({ param: 1 }));
 
 			const actions = store.getActions();
 			expect(actions).to.eql([
@@ -163,7 +135,14 @@ describe('typescript-fsa-redux-thunk', () => {
 			]);
 		});
 		it('full dispatch (failure)', async () => {
-			const result = await store.dispatch(test1({ param: 2 }));
+			let thrown;
+			try {
+				await store.dispatch(test1.action({ param: 2 }));
+			} catch (err) {
+				thrown = err;
+			}
+
+			expect(thrown).to.eql(fakeError);
 
 			const actions = store.getActions();
 			expect(actions).to.eql([
@@ -181,8 +160,8 @@ describe('typescript-fsa-redux-thunk', () => {
 				}
 			]);
 		});
-		it('dispatch without an argument', () => {
-			const result = store.dispatch(test2());
+		it('dispatch without an argument', async () => {
+			const result = await store.dispatch(test2.action());
 
 			const actions = store.getActions();
 			expect(actions).to.eql([
@@ -200,8 +179,15 @@ describe('typescript-fsa-redux-thunk', () => {
 			]);
 		});
 
-		it('dispatch without an argument (failure)', () => {
-			const result = store.dispatch(test3());
+		it('dispatch without an argument (failure)', async () => {
+			let thrown;
+			try {
+				await store.dispatch(test3.action());
+			} catch (err) {
+				thrown = err;
+			}
+
+			expect(thrown).to.eql(fakeError);
 
 			const actions = store.getActions();
 			expect(actions).to.eql([
@@ -221,24 +207,13 @@ describe('typescript-fsa-redux-thunk', () => {
 		});
 
 		it('full test', async () => {
-			const result = await store.dispatch(test4({ param: 1 }));
+			const result = await store.dispatch(test4.action({ param: 1 }));
 
 			const actions = store.getActions();
 			expect(actions).to.eql([
 				{
 					type: 'test/test4_STARTED',
 					payload: { param: 1 }
-				},
-				{
-					type: 'test/test1_STARTED',
-					payload: { param: 1 }
-				},
-				{
-					type: 'test/test1_DONE',
-					payload: {
-						params: { param: 1 },
-						result: ''
-					}
 				},
 				{
 					type: 'test/test1_STARTED',
@@ -284,8 +259,13 @@ describe('typescript-fsa-redux-thunk', () => {
 			]);
 		});
 
+		it('thunkToAction', async () => {
+			const action = thunkToAction(successTest.action);
+			expect(action).to.eql(successTest.action);
+		});
+
 		it('reducer test', async () => {
-			const result = await store.dispatch(test4({ param: 1 }));
+			const result = await store.dispatch(test4.action({ param: 1 }));
 
 			const [started, done] = store.getActions().filter(action =>
 					action.type.includes('test4'));
