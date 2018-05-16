@@ -43,12 +43,12 @@ export const bindThunkAction = <P, S, E, T, U = any>(
 	extra
 ) => {
 	try {
-		dispatch((actionCreators.started as any)(params));
-		const result = await asyncWorker(params as P, dispatch, getState, extra);
-		dispatch(actionCreators.done({ params, result } as Success<P, S>));
+		dispatch(actionCreators.started(params!));
+		const result = await asyncWorker(params!, dispatch, getState, extra);
+		dispatch(actionCreators.done({ params: params!, result }));
 		return result;
 	} catch (error) {
-		dispatch(actionCreators.failed({ params, error } as Failure<P, E>));
+		dispatch(actionCreators.failed({ params: params!, error }));
 		throw error;
 	}
 };

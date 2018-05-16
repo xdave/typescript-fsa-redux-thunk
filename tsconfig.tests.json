@@ -1,16 +1,16 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
-    "lib": ["esnext"],
-    "strict": true,
-	"strictFunctionTypes": true,
-	"noFallthroughCasesInSwitch": true,
-	"noImplicitAny": true,
-	"noImplicitReturns": true,
-	"noImplicitThis": true,
-	"alwaysStrict": true,
-    "sourceMap": true,
-    "esModuleInterop": true
-  }
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "commonjs",
+		"lib": ["dom", "esnext"],
+		"strict": true,
+		"strictFunctionTypes": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		"sourceMap": true,
+		"esModuleInterop": true
+	}
 }
