@@ -34,8 +34,8 @@ Factory function to easily create a typescript-fsa redux thunk.
 **Example**
 ```ts
 import 'isomorphic-fetch';
-import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { createStore, applyMiddleware, AnyAction } from 'redux';
+import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 import { asyncFactory } from 'typescript-fsa-redux-thunk';
@@ -125,7 +125,10 @@ const reducer = reducerWithInitialState(initial)
 
 /** Putting it all together */
 (async () => {
-	const store = createStore(reducer, applyMiddleware(thunkMiddleware));
+	// Declaring the type of the redux-thunk middleware is what makes
+	// `store.dispatch` work. (redux@4.x, redux-thunk@2.3.x)
+	const thunk: ThunkMiddleware<State, AnyAction> = thunkMiddleware;
+	const store = createStore(reducer, applyMiddleware(thunk));
 	console.log(store.getState().title);
 
 	try {
