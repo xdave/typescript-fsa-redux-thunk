@@ -1,32 +1,26 @@
-import { Dispatch } from 'redux';
-import { ThunkAction } from 'redux-thunk';
-import {
-	Action,
-	AsyncActionCreators,
-	ActionCreatorFactory,
-	Failure,
-	Success
-} from 'typescript-fsa';
+import { AnyAction } from 'redux';
+import { ThunkDispatch, ThunkAction } from 'redux-thunk';
+import { AsyncActionCreators, ActionCreatorFactory } from 'typescript-fsa';
 
 /**
  * It's either a promise, or it isn't
  */
-export type MaybePromise<T> = T | Promise<T>;
+export type MaybePromise<Type> = Type | Promise<Type>;
 
 /**
  * A redux-thunk with the params as the first argument.  You don't have to
  * return a promise; but, the result of the dispatch will be one.
  */
-export type AsyncWorker<P, S, T, U = any> = (
-	params: P,
-	dispatch: Dispatch<T>,
-	getState: () => T,
-	extra: U
-) => MaybePromise<S>;
+export type AsyncWorker<Params, Succ, State, Extra = any> = (
+	params: Params,
+	dispatch: ThunkDispatch<State, Extra, AnyAction>,
+	getState: () => State,
+	extra: Extra
+) => MaybePromise<Succ>;
 
 /** A function that takes parameters and returns a redux-thunk */
-export type ThunkActionCreator<P, R, S, U> =
-	(params?: P) => ThunkAction<R, S, U>;
+export type ThunkActionCreator<Params, Result, State, Extra> =
+	(params?: Params) => ThunkAction<Result, State, Extra, AnyAction>;
 
 /**
  * Bind a redux-thunk to typescript-fsa async action creators
@@ -34,10 +28,10 @@ export type ThunkActionCreator<P, R, S, U> =
  * @param asyncWorker A redux-thunk with extra `params` as the first argument
  * @returns a ThunkActionCreator, the result of which you can pass to dispatch()
  */
-export const bindThunkAction = <P, S, E, T, U = any>(
-	actionCreators: AsyncActionCreators<P, S, E>,
-	asyncWorker: AsyncWorker<P, S, T, U>
-): ThunkActionCreator<P, Promise<S>, T, U> => params => async (
+export const bindThunkAction = <Params, Succ, Err, State, Extra = any>(
+	actionCreators: AsyncActionCreators<Params, Succ, Err>,
+	asyncWorker: AsyncWorker<Params, Succ, State, Extra>
+): ThunkActionCreator<Params, Promise<Succ>, State, Extra> => params => async (
 	dispatch,
 	getState,
 	extra
@@ -62,12 +56,12 @@ export const bindThunkAction = <P, S, E, T, U = any>(
  * And returns object with the async actions and the thunk itself
  */
 
-export const asyncFactory = <T = any, U = any>(
+export const asyncFactory = <State = any, Extra = any>(
 	factory: ActionCreatorFactory
-) => <P, S, E = Error>(
+) => <Params, Succ, Err = Error>(
 	type: string,
-	fn: AsyncWorker<P, S, T, U>,
-	async = factory.async<P, S, E>(type)
+	fn: AsyncWorker<Params, Succ, State, Extra>,
+	async = factory.async<Params, Succ, Err>(type)
 ) => ({ async, action: bindThunkAction(async, fn) });
 
 /**
@@ -77,8 +71,8 @@ export const asyncFactory = <T = any, U = any>(
  * @param thunkActionCreator The thunk action creator
  * @returns thunkAction as if it was bound
  */
-export const thunkToAction = <P, R, S, U>(
-	thunkActionCreator: ThunkActionCreator<P, R, S, U>
-): ((params?: P) => R) => thunkActionCreator as any;
+export const thunkToAction = <Params, Succ, State, Extra>(
+	thunkActionCreator: ThunkActionCreator<Params, Succ, State, Extra>
+): ((params?: Params) => Succ) => thunkActionCreator as any;
 
 export default bindThunkAction;
