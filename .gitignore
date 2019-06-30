@@ -9,6 +9,9 @@ npm-*.log
 # OS X
 .DS_Store
 
-# build
-# es
-# lib
+lib-cov
+coverage
+.nyc_output
+coverage.*
+.vscode/
+.npmrc

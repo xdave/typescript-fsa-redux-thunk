@@ -1,65 +1,56 @@
 {
-  "rules": {
-    "class-name": true,
-    "comment-format": [
-      true,
-      "check-space"
-    ],
-    "indent": [
-      true,
-      "spaces"
-    ],
-    "max-line-length": [
-      true,
-      80
-    ],
-    "no-duplicate-variable": true,
-    "no-empty": false,
-    "no-eval": true,
-    "no-internal-module": true,
-    "no-trailing-whitespace": false,
-    "no-unused-expression": true,
-    "no-use-before-declare": true,
-    "no-var-keyword": true,
-    "one-line": [
-      true,
-      "check-catch",
-      "check-else",
-      "check-open-brace",
-      "check-whitespace"
-    ],
-    "quotemark": false,
-    "semicolon": true,
-    "trailing-comma": [
-      true, {
-        "multiline": "always"
-      }
-    ],
-    "triple-equals": [
-      true,
-      "allow-null-check"
-    ],
-    "typedef-whitespace": [
-      true,
-      {
-        "call-signature": "nospace",
-        "index-signature": "nospace",
-        "parameter": "nospace",
-        "property-declaration": "nospace",
-        "variable-declaration": "nospace"
-      }
-    ],
-    "variable-name": [
-      true,
-      "ban-keywords"
-    ],
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-separator",
-      "check-type"
-    ]
-  }
+	"extends": [
+		"tslint:latest"
+	],
+	"rules": {
+		"no-shadowed-variable": false,
+		"no-empty-interface": false,
+		"no-string-literal": false,
+		"indent": [true, "tabs"],
+		"no-unused-expression": false,
+		"no-duplicate-variable": true,
+		"no-unused-variable": false,
+		"object-literal-sort-keys": false,
+		"arrow-parens": false,
+		"no-var-requires": false,
+		"space-before-function-paren": false,
+		"no-consecutive-blank-lines": [
+			true, 2
+		],
+		"ordered-imports": [
+			false
+		],
+		"no-console": [
+			false
+		],
+		"interface-name": [
+			false
+		],
+		"member-access": [
+			false
+		],
+		"curly": true,
+		"class-name": true,
+		"semicolon": [true, "always"],
+		"triple-equals": true,
+		"quotemark": [
+			true,
+			"single",
+			"jsx-double"
+		],
+		"max-line-length": [
+			true,
+			80
+		],
+		"trailing-comma": [
+			true,
+			{
+				"multiline": "never",
+				"singleline": "never"
+			}
+		],
+		"no-submodule-imports": false,
+		"no-object-literal-type-assertion": false,
+		"no-implicit-dependencies": false
+	}
 }

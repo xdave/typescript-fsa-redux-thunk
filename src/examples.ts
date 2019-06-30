@@ -1,37 +1,9 @@
-# [TypeScript FSA](https://github.com/aikoven/typescript-fsa) utilities for redux-thunk
-[![npm (tag)](https://img.shields.io/npm/v/typescript-fsa-redux-thunk/beta.svg)](https://github.com/xdave/typescript-fsa-redux-thunk)
-[![npm](https://img.shields.io/npm/l/typescript-fsa-redux-thunk.svg)](https://github.com/xdave/typescript-fsa-redux-thunk/blob/v2/LICENSE.md)
-[![GitHub last commit (branch)](https://img.shields.io/github/last-commit/xdave/typescript-fsa-redux-thunk/v2.svg)](https://github.com/xdave/typescript-fsa-redux-thunk)
-[![Build Status][travis-image]][travis-url]
-[![codecov](https://codecov.io/gh/xdave/typescript-fsa-redux-thunk/branch/v2/graph/badge.svg)](https://codecov.io/gh/xdave/typescript-fsa-redux-thunk)
-
-### NOTE: There's breaking changes from 1.x.  Read on to find out more and check the notes at the bottom for more info.
-
-## Installation
-```
-npm i typescript-fsa-redux-thunk redux redux-thunk
-```
-
-## API
-
-### `thunkToAction(ThunkActionCreator): ((Params) => Result)`
-Another useful cast function that can help when attempting to extract the return
-value out of your async action creator.  If the action is being pre-bound to
-dispatch, then all we want back is the return value (the action object).
-Coming soon: an example.  TL;DR: pass your async action creator into this before
-passing it to `bindActionCreators` or the `mapDispatchToProps` object (react-redux).
-
-### `asyncFactory<State>(ActionCreatorFactory): ((type: string, AsyncWorker) => ({ async: AsyncActionCreators, action: ThunkActionCreator }))`
-Factory function to easily create a typescript-fsa redux thunk.
-
-**Example**
-```ts
 import 'isomorphic-fetch';
 import { createStore, applyMiddleware, AnyAction } from 'redux';
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk';
-import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
-import { asyncFactory } from 'typescript-fsa-redux-thunk';
+import actionCreatorFactory from 'typescript-fsa';
+import { asyncFactory } from '.';
 
 /** Parameters used for logging in */
 interface LoginParams {
@@ -139,15 +111,3 @@ const reducer = reducerWithInitialState(initial)
 		console.log(err);
 	}
 })();
-```
-
-Note: A change from 1.x is the result type is not always assumed to be a
-Promise. If you want the result to be a promise, just return one from your
-worker function; but continue to specify the result as `T` rather than
-`Promise<T>` (same as 1.x).
-
-The API has been simplified.  This release is in preparation for a new project
-that works with react hooks. Coming soon!
-
-[travis-image]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk.svg?branch=v2
-[travis-url]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk
