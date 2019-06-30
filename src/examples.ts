@@ -94,15 +94,19 @@ const reducer = reducerWithInitialState(initial)
 	// `store.dispatch` work. (redux@4.x, redux-thunk@2.3.x)
 	const thunk: ThunkMiddleware<State, AnyAction> = thunkMiddleware;
 	const store = createStore(reducer, applyMiddleware(thunk));
+
 	console.log(store.getState().title);
 
 	try {
-		const userToken = await store.dispatch(login.action({
-			email: 'test@example.com',
-			password: 'password'
+		// See https://reqres.in/api/users for valid users on this site
+		await store.dispatch(login.action({
+			email: 'eve.holt@reqres.in',
+			password: 'cityslicka'
 		}));
 
-		console.log(store.getState().title, userToken);
+		const { title, userToken } = store.getState();
+
+		console.log(title, userToken);
 	} catch (err) {
 		console.log(err);
 	}
