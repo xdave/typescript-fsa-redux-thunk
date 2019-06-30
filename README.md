@@ -5,11 +5,11 @@
 [![Build Status][travis-image]][travis-url]
 [![codecov](https://codecov.io/gh/xdave/typescript-fsa-redux-thunk/branch/v2/graph/badge.svg)](https://codecov.io/gh/xdave/typescript-fsa-redux-thunk)
 
-### NOTE: There's probably breaking changes from 1.x.  Read on to find out more and check the notes at the bottom for more info.
+### NOTE: There's breaking changes from 1.x.  Read on to find out more and check the notes at the bottom for more info.
 
 ## Installation
 ```
-npm i typescript-fsa-redux-thunk@beta redux redux-thunk
+npm i typescript-fsa-redux-thunk redux redux-thunk
 ```
 
 ## API
@@ -145,6 +145,9 @@ Note: A change from 1.x is the result type is not always assumed to be a
 Promise. If you want the result to be a promise, just return one from your
 worker function; but continue to specify the result as `T` rather than
 `Promise<T>` (same as 1.x).
+
+The API has been simplified.  This release is in preparation for a new project
+that works with react hooks. Coming soon!
 
 [travis-image]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk.svg?branch=v2
 [travis-url]: https://travis-ci.org/xdave/typescript-fsa-redux-thunk
