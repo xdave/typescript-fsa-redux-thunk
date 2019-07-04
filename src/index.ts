@@ -27,10 +27,10 @@ export type AsyncWorker<P, R, S> = (
 export const asyncFactory = <S>(create: ActionCreatorFactory) => <P, R>(
 	type: string,
 	worker: AsyncWorker<P, R, S>
-) => ({
-	async: create.async<P, R, Error>(type),
-	action(params?: P): ThunkAction<PromiseLike<R>, S, any, AnyAction> {
-		return async (dispatch, getState) => {
+) => (new class ThunkFunction {
+	async = create.async<P, R, Error>(type);
+	action = (params?: P): ThunkAction<PromiseLike<R>, S, any, AnyAction> =>
+		async (dispatch, getState) => {
 			try {
 				dispatch(this.async.started(params!));
 				const result = await worker(params!, dispatch, getState);
@@ -40,9 +40,8 @@ export const asyncFactory = <S>(create: ActionCreatorFactory) => <P, R>(
 				dispatch(this.async.failed({ params: params!, error }));
 				throw error;
 			}
-		};
-	}
-});
+		}
+}());
 
 /** Utility type for a function that takes paras and returns a redux-thunk */
 export type ThunkCreator<P, R, S> =
