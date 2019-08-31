@@ -54,7 +54,7 @@ const test4 = createAsync<Params, Succ>(
 			// noop
 		}
 		return 'This is a test.';
-	}
+	},
 );
 
 const test5 = createAsync<Params, Succ, OtherError>(
@@ -64,7 +64,7 @@ const test5 = createAsync<Params, Succ, OtherError>(
 			throw otherError;
 		}
 		return '';
-	}
+	},
 );
 
 const initial: State = { foo: 'test' };
@@ -72,21 +72,21 @@ const initial: State = { foo: 'test' };
 const reducer = reducerWithInitialState(initial)
 	.case(test4.async.started, state => ({
 		...state,
-		updating: true
+		updating: true,
 	}))
 	.case(test4.async.failed, (state, { error }) => ({
 		...state,
 		updating: false,
-		error
+		error,
 	}))
 	.case(test4.async.done, (state, { result: foo }) => ({
 		...state,
 		updating: false,
-		foo
+		foo,
 	}))
 	.case(test5.async.failed, (state, { error: otherError }) => ({
 		...state,
-		otherError
+		otherError,
 	}))
 	.build();
 
@@ -107,35 +107,35 @@ describe('typescript-fsa-redux-thunk', () => {
 			const result = store.dispatch(test1.async.started({ param: 1 }));
 			expect(result).to.eql({
 				type: 'test/test1_STARTED',
-				payload: { param: 1 }
+				payload: { param: 1 },
 			});
 		});
 		it('failed', () => {
 			const result = store.dispatch(test1.async.failed({
 				params: { param: 1 },
-				error: fakeError
+				error: fakeError,
 			}));
 			expect(result).to.eql({
 				type: 'test/test1_FAILED',
 				error: true,
 				payload: {
 					params: { param: 1 },
-					error: fakeError
-				}
+					error: fakeError,
+				},
 			});
 		});
 		it('done', async () => {
 			const promise = await Promise.resolve('');
 			const result = store.dispatch(test1.async.done({
 				params: { param: 1 },
-				result: promise
+				result: promise,
 			}));
 			expect(result).to.eql({
 				type: 'test/test1_DONE',
 				payload: {
 					params: { param: 1 },
-					result: promise
-				}
+					result: promise,
+				},
 			});
 		});
 		it('full dispatch (success)', async () => {
@@ -145,15 +145,15 @@ describe('typescript-fsa-redux-thunk', () => {
 			expect(actions).to.eql([
 				{
 					type: 'test/test1_STARTED',
-					payload: { param: 1 }
+					payload: { param: 1 },
 				},
 				{
 					type: 'test/test1_DONE',
 					payload: {
 						params: { param: 1 },
-						result: ''
-					}
-				}
+						result: '',
+					},
+				},
 			]);
 		});
 		it('full dispatch (failure)', async () => {
@@ -170,16 +170,16 @@ describe('typescript-fsa-redux-thunk', () => {
 			expect(actions).to.eql([
 				{
 					type: 'test/test1_STARTED',
-					payload: { param: 2 }
+					payload: { param: 2 },
 				},
 				{
 					type: 'test/test1_FAILED',
 					error: true,
 					payload: {
 						params: { param: 2 },
-						error: fakeError
-					}
-				}
+						error: fakeError,
+					},
+				},
 			]);
 		});
 		it('full dispatch (failure with error type)', async () => {
@@ -196,16 +196,16 @@ describe('typescript-fsa-redux-thunk', () => {
 			expect(actions).to.eql([
 				{
 					type: 'test/test5_STARTED',
-					payload: { param: 2 }
+					payload: { param: 2 },
 				},
 				{
 					type: 'test/test5_FAILED',
 					error: true,
 					payload: {
 						params: { param: 2 },
-						error: otherError
-					}
-				}
+						error: otherError,
+					},
+				},
 			]);
 
 			const [, failed] = actions;
@@ -213,7 +213,7 @@ describe('typescript-fsa-redux-thunk', () => {
 			const failedState = reducer(initialState, failed);
 			expect(failedState).to.eql({
 				...initialState,
-				otherError
+				otherError,
 			});
 		});
 		it('dispatch without an argument', async () => {
@@ -223,15 +223,15 @@ describe('typescript-fsa-redux-thunk', () => {
 			expect(actions).to.eql([
 				{
 					type: 'test/test2_STARTED',
-					payload: undefined
+					payload: undefined,
 				},
 				{
 					type: 'test/test2_DONE',
 					payload: {
 						params: undefined,
-						result: ''
-					}
-				}
+						result: '',
+					},
+				},
 			]);
 		});
 
@@ -249,16 +249,16 @@ describe('typescript-fsa-redux-thunk', () => {
 			expect(actions).to.eql([
 				{
 					type: 'test/test3_STARTED',
-					payload: undefined
+					payload: undefined,
 				},
 				{
 					type: 'test/test3_FAILED',
 					error: true,
 					payload: {
 						params: undefined,
-						error: fakeError
-					}
-				}
+						error: fakeError,
+					},
+				},
 			]);
 		});
 
@@ -269,49 +269,49 @@ describe('typescript-fsa-redux-thunk', () => {
 			expect(actions).to.eql([
 				{
 					type: 'test/test4_STARTED',
-					payload: { param: 1 }
+					payload: { param: 1 },
 				},
 				{
 					type: 'test/test1_STARTED',
-					payload: { param: 1 }
+					payload: { param: 1 },
 				},
 				{
 					type: 'test/test1_DONE',
 					payload: {
 						params: { param: 1 },
-						result: ''
-					}
+						result: '',
+					},
 				},
 				{
 					type: 'test/test2_STARTED',
-					payload: undefined
+					payload: undefined,
 				},
 				{
 					type: 'test/test2_DONE',
 					payload: {
 						params: undefined,
-						result: ''
-					}
+						result: '',
+					},
 				},
 				{
 					type: 'test/test3_STARTED',
-					payload: undefined
+					payload: undefined,
 				},
 				{
 					type: 'test/test3_FAILED',
 					error: true,
 					payload: {
 						params: undefined,
-						error: fakeError
-					}
+						error: fakeError,
+					},
 				},
 				{
 					type: 'test/test4_DONE',
 					payload: {
 						params: { param: 1 },
-						result: 'This is a test.'
-					}
-				}
+						result: 'This is a test.',
+					},
+				},
 			]);
 		});
 
@@ -332,14 +332,14 @@ describe('typescript-fsa-redux-thunk', () => {
 			const startedState = reducer(beforeState, started);
 			expect(startedState).to.eql({
 				...beforeState,
-				updating: true
+				updating: true,
 			});
 
 			const doneState = reducer(startedState, done);
 			expect(doneState).to.eql({
 				...startedState,
 				updating: false,
-				foo: 'This is a test.'
+				foo: 'This is a test.',
 			});
 		});
 	});

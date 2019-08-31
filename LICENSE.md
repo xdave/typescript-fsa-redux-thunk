@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2017 Dave Gradwell (xdave)
+Copyright (c) 2017-2019 Dave Gradwell (xdave)
 Copyright (c) 2016 Daniel Lytkin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
