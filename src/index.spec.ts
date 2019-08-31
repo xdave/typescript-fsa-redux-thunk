@@ -12,10 +12,15 @@ interface Ext {
 
 const fakeError = new Error('Fake Error');
 
+class OtherError extends Error { }
+
+const otherError = new OtherError('Another fake error');
+
 interface State {
 	foo: string;
 	updating?: boolean;
 	error?: Error;
+	otherError?: OtherError;
 }
 
 interface Params { param: number; }
@@ -52,6 +57,16 @@ const test4 = createAsync<Params, Succ>(
 	}
 );
 
+const test5 = createAsync<Params, Succ, OtherError>(
+	'test5',
+	async ({ param }) => {
+		if (param === 2) {
+			throw otherError;
+		}
+		return '';
+	}
+);
+
 const initial: State = { foo: 'test' };
 
 const reducer = reducerWithInitialState(initial)
@@ -68,6 +83,10 @@ const reducer = reducerWithInitialState(initial)
 		...state,
 		updating: false,
 		foo
+	}))
+	.case(test5.async.failed, (state, { error: otherError }) => ({
+		...state,
+		otherError
 	}))
 	.build();
 
@@ -162,6 +181,40 @@ describe('typescript-fsa-redux-thunk', () => {
 					}
 				}
 			]);
+		});
+		it('full dispatch (failure with error type)', async () => {
+			let thrown;
+			try {
+				await store.dispatch(test5.action({ param: 2 }));
+			} catch (err) {
+				thrown = err;
+			}
+
+			expect(thrown).to.eql(otherError);
+
+			const actions = store.getActions();
+			expect(actions).to.eql([
+				{
+					type: 'test/test5_STARTED',
+					payload: { param: 2 }
+				},
+				{
+					type: 'test/test5_FAILED',
+					error: true,
+					payload: {
+						params: { param: 2 },
+						error: otherError
+					}
+				}
+			]);
+
+			const [, failed] = actions;
+			const initialState = store.getState();
+			const failedState = reducer(initialState, failed);
+			expect(failedState).to.eql({
+				...initialState,
+				otherError
+			});
 		});
 		it('dispatch without an argument', async () => {
 			await store.dispatch(test2.action());
@@ -271,7 +324,7 @@ describe('typescript-fsa-redux-thunk', () => {
 			await store.dispatch(test4.action({ param: 1 }));
 
 			const [started, done] = store.getActions().filter(action =>
-					action.type.includes('test4'));
+				action.type.includes('test4'));
 
 			const beforeState = store.getState();
 			expect(beforeState).to.eql(initial);

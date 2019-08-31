@@ -24,24 +24,25 @@ export type AsyncWorker<P, R, S> = (
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export const asyncFactory = <S>(create: ActionCreatorFactory) => <P, R>(
-	type: string,
-	worker: AsyncWorker<P, R, S>
-) => (new class ThunkFunction {
-	async = create.async<P, R, Error>(type);
-	action = (params?: P): ThunkAction<PromiseLike<R>, S, any, AnyAction> =>
-		async (dispatch, getState) => {
-			try {
-				dispatch(this.async.started(params!));
-				const result = await worker(params!, dispatch, getState);
-				dispatch(this.async.done({ params: params!, result }));
-				return result;
-			} catch (error) {
-				dispatch(this.async.failed({ params: params!, error }));
-				throw error;
+export const asyncFactory = <S>(create: ActionCreatorFactory) =>
+	<P, R, E extends Error = Error>(
+		type: string,
+		worker: AsyncWorker<P, R, S>
+	) => (new class ThunkFunction {
+		async = create.async<P, R, E>(type);
+		action = (params?: P): ThunkAction<PromiseLike<R>, S, any, AnyAction> =>
+			async (dispatch, getState) => {
+				try {
+					dispatch(this.async.started(params!));
+					const result = await worker(params!, dispatch, getState);
+					dispatch(this.async.done({ params: params!, result }));
+					return result;
+				} catch (error) {
+					dispatch(this.async.failed({ params: params!, error }));
+					throw error;
+				}
 			}
-		}
-}());
+	}());
 
 /** Utility type for a function that takes paras and returns a redux-thunk */
 export type ThunkCreator<P, R, S> =
