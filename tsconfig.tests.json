@@ -2,7 +2,10 @@
 	"compilerOptions": {
 		"target": "esnext",
 		"module": "commonjs",
-		"lib": ["dom", "esnext"],
+		"lib": [
+			"dom",
+			"esnext"
+		],
 		"strict": true,
 		"strictFunctionTypes": true,
 		"noFallthroughCasesInSwitch": true,

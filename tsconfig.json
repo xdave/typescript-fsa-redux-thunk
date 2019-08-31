@@ -2,7 +2,10 @@
 	"compilerOptions": {
 		"target": "es5",
 		"module": "commonjs",
-		"lib": ["dom", "esnext"],
+		"lib": [
+			"dom",
+			"esnext"
+		],
 		"declaration": true,
 		"declarationDir": "lib",
 		"outDir": "lib",

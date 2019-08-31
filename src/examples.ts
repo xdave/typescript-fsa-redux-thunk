@@ -45,8 +45,8 @@ const login = createAsync<LoginParams, UserToken, CustomError>(
 			method: 'POST',
 			body: JSON.stringify(params),
 			headers: {
-				'Content-Type': 'application/json; charset=utf-8'
-			}
+				'Content-Type': 'application/json; charset=utf-8',
+			},
 		};
 		const res = await fetch(url, options);
 		if (!res.ok) {
@@ -56,38 +56,38 @@ const login = createAsync<LoginParams, UserToken, CustomError>(
 		dispatch(changeTitle('You are logged-in'));
 
 		return res.json();
-	}
+	},
 );
 
 /** An initial value for the application state */
 const initial: State = {
 	title: 'Please login',
 	userToken: {
-		token: ''
-	}
+		token: '',
+	},
 };
 
 /** Reducer, handling updates to indicate logging-in status/error */
 const reducer = reducerWithInitialState(initial)
 	.case(changeTitle, (state, title) => ({
 		...state,
-		title
+		title,
 	}))
 	.case(login.async.started, state => ({
 		...state,
 		loggingIn: true,
-		error: undefined
+		error: undefined,
 	}))
 	.case(login.async.failed, (state, { error }) => ({
 		...state,
 		loggingIn: false,
-		error
+		error,
 	}))
 	.case(login.async.done, (state, { result: userToken }) => ({
 		...state,
 		userToken,
 		loggingIn: false,
-		error: undefined
+		error: undefined,
 	}));
 
 /** Putting it all together */
@@ -103,7 +103,7 @@ const reducer = reducerWithInitialState(initial)
 		// See https://reqres.in/api/users for valid users on this site
 		await store.dispatch(login.action({
 			email: 'eve.holt@reqres.in',
-			password: 'cityslicka'
+			password: 'cityslicka',
 		}));
 
 		const { title, userToken } = store.getState();

@@ -6,7 +6,11 @@
 		"no-shadowed-variable": false,
 		"no-empty-interface": false,
 		"no-string-literal": false,
-		"indent": [true, "tabs"],
+		"indent": [
+			true,
+			"tabs",
+			4
+		],
 		"no-unused-expression": false,
 		"no-duplicate-variable": true,
 		"no-unused-variable": false,
@@ -15,7 +19,8 @@
 		"no-var-requires": false,
 		"space-before-function-paren": false,
 		"no-consecutive-blank-lines": [
-			true, 2
+			true,
+			2
 		],
 		"ordered-imports": [
 			false
@@ -31,7 +36,10 @@
 		],
 		"curly": true,
 		"class-name": true,
-		"semicolon": [true, "always"],
+		"semicolon": [
+			true,
+			"always"
+		],
 		"triple-equals": true,
 		"quotemark": [
 			true,
@@ -45,7 +53,7 @@
 		"trailing-comma": [
 			true,
 			{
-				"multiline": "never",
+				"multiline": "always",
 				"singleline": "never"
 			}
 		],

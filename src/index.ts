@@ -13,7 +13,7 @@ export type MaybePromise<T> = T | PromiseLike<T>;
 export type AsyncWorker<P, R, S> = (
 	params: P,
 	dispatch: ThunkDispatch<S, any, AnyAction>,
-	getState: () => S
+	getState: () => S,
 ) => MaybePromise<R>;
 
 /**
@@ -27,7 +27,7 @@ export type AsyncWorker<P, R, S> = (
 export const asyncFactory = <S>(create: ActionCreatorFactory) =>
 	<P, R, E extends Error = Error>(
 		type: string,
-		worker: AsyncWorker<P, R, S>
+		worker: AsyncWorker<P, R, S>,
 	) => (new class ThunkFunction {
 		async = create.async<P, R, E>(type);
 		action = (params?: P): ThunkAction<PromiseLike<R>, S, any, AnyAction> =>
@@ -59,7 +59,7 @@ export type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
  * @returns thunkAction as if it was bound
  */
 export const thunkToAction = <P, R, S>(
-	thunkCreator: ThunkCreator<P, R, S>
+	thunkCreator: ThunkCreator<P, R, S>,
 ): ThunkFn<P, R> => thunkCreator as any;
 
 export default asyncFactory;
