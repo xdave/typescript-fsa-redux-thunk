@@ -24,11 +24,12 @@ export type AsyncWorker<P, R, S> = (
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export const asyncFactory = <S>(create: ActionCreatorFactory) => <P, R>(
+export const asyncFactory = <S>(create: ActionCreatorFactory) =>
+<P, R, E extends Error = Error>(
 	type: string,
 	worker: AsyncWorker<P, R, S>
 ) => (new class ThunkFunction {
-	async = create.async<P, R, Error>(type);
+	async = create.async<P, R, E>(type);
 	action = (params?: P): ThunkAction<PromiseLike<R>, S, any, AnyAction> =>
 		async (dispatch, getState) => {
 			try {

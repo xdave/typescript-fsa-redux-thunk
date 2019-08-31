@@ -17,8 +17,8 @@ export declare type AsyncWorker<P, R, S> = (params: P, dispatch: ThunkDispatch<S
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export declare const asyncFactory: <S>(create: ActionCreatorFactory) => <P, R>(type: string, worker: AsyncWorker<P, R, S>) => {
-    async: import("typescript-fsa").AsyncActionCreators<P, R, Error>;
+export declare const asyncFactory: <S>(create: ActionCreatorFactory) => <P, R, E extends Error = Error>(type: string, worker: AsyncWorker<P, R, S>) => {
+    async: import("typescript-fsa").AsyncActionCreators<P, R, E>;
     action: (params?: P | undefined) => ThunkAction<PromiseLike<R>, S, any, AnyAction>;
 };
 /** Utility type for a function that takes paras and returns a redux-thunk */
