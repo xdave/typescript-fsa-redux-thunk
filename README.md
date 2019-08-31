@@ -29,9 +29,12 @@ Factory function to easily create a typescript-fsa redux thunk.
 import 'isomorphic-fetch';
 import { createStore, applyMiddleware, AnyAction } from 'redux';
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk';
-import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
+import actionCreatorFactory from 'typescript-fsa';
 import { asyncFactory } from 'typescript-fsa-redux-thunk';
+
+/** You can optionally use custom Error types */
+class CustomError extends Error { }
 
 /** Parameters used for logging in */
 interface LoginParams {
@@ -49,7 +52,7 @@ interface State {
 	title: string;
 	userToken: UserToken;
 	loggingIn?: boolean;
-	error?: Error;
+	error?: CustomError;
 }
 
 /** The typescript-fsa action creator factory function */
@@ -61,8 +64,8 @@ const createAsync = asyncFactory<State>(create);
 /** Normal synchronous action */
 const changeTitle = create<string>('Change the title');
 
-/** The asynchronous login action */
-const login = createAsync<LoginParams, UserToken>(
+/** The asynchronous login action; Error type is optional */
+const login = createAsync<LoginParams, UserToken, CustomError>(
 	'Login',
 	async (params, dispatch) => {
 		const url = `https://reqres.in/api/login`;
@@ -75,8 +78,7 @@ const login = createAsync<LoginParams, UserToken>(
 		};
 		const res = await fetch(url, options);
 		if (!res.ok) {
-			throw new Error(
-				`Error ${res.status}: ${res.statusText} ${await res.text()}`);
+			throw new CustomError(`Error ${res.status}: ${res.statusText}`);
 		}
 
 		dispatch(changeTitle('You are logged-in'));

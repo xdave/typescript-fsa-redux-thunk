@@ -12,7 +12,7 @@ interface Ext {
 
 const fakeError = new Error('Fake Error');
 
-class OtherError extends Error {}
+class OtherError extends Error { }
 
 const otherError = new OtherError('Another fake error');
 
@@ -57,12 +57,15 @@ const test4 = createAsync<Params, Succ>(
 	}
 );
 
-const test5 = createAsync<Params, Succ, OtherError>('test5', async ({param}) => {
-	if (param === 2) {
-		throw otherError;
+const test5 = createAsync<Params, Succ, OtherError>(
+	'test5',
+	async ({ param }) => {
+		if (param === 2) {
+			throw otherError;
+		}
+		return '';
 	}
-	return '';
-});
+);
 
 const initial: State = { foo: 'test' };
 
@@ -204,7 +207,7 @@ describe('typescript-fsa-redux-thunk', () => {
 					}
 				}
 			]);
-			
+
 			const [, failed] = actions;
 			const initialState = store.getState();
 			const failedState = reducer(initialState, failed);
@@ -321,7 +324,7 @@ describe('typescript-fsa-redux-thunk', () => {
 			await store.dispatch(test4.action({ param: 1 }));
 
 			const [started, done] = store.getActions().filter(action =>
-					action.type.includes('test4'));
+				action.type.includes('test4'));
 
 			const beforeState = store.getState();
 			expect(beforeState).to.eql(initial);
