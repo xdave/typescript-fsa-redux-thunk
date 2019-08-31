@@ -1,88 +1,88 @@
 {
-  "name": "typescript-fsa-redux-thunk",
-  "version": "2.1.2",
-  "description": "TypeScript FSA utilities for redux-thunk",
-  "keywords": [
-    "redux",
-    "thunk",
-    "redux-thunk",
-    "typescript",
-    "typescript-fsa",
-    "action",
-    "action creator",
-    "flux standard action"
-  ],
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "src"
-  ],
-  "repository": "xdave/typescript-fsa-redux-thunk",
-  "scripts": {
-    "clean": "rimraf lib .nyc_output coverage",
-    "lint": "tslint --project tsconfig.json -c tslint.json",
-    "test": "cross-env TS_NODE_PROJECT=tsconfig.tests.json nyc mocha --exclude src/examples.ts",
-    "test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts",
-    "posttest": "test $CI && codecov -f coverage/*.json || true",
-    "build:lib": "tsc",
-    "build": "npm -s run build:lib"
-  },
-  "author": "Dave Gradwell <deft.productions@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/xdave/typescript-fsa-redux-thunk/issues"
-  },
-  "homepage": "https://github.com/xdave/typescript-fsa-redux-thunk#readme",
-  "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^12.0.10",
-    "@types/redux-mock-store": "^1.0.1",
-    "chai": "^4.2.0",
-    "codecov": "^3.5.0",
-    "cross-env": "^5.2.0",
-    "isomorphic-fetch": "^2.2.1",
-    "mocha": "^6.1.4",
-    "nyc": "^14.1.1",
-    "redux": "^4.x",
-    "redux-mock-store": "^1.5.3",
-    "rimraf": "^2.6.3",
-    "ts-node": "^8.3.0",
-    "tslib": "^1.10.0",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.2",
-    "typescript-fsa-reducers": "^1.2.1"
-  },
-  "dependencies": {
-    "redux-thunk": "^2.3.0",
-    "typescript-fsa": "^3.0.0-beta-2"
-  },
-  "peerDependencies": {
-    "redux": ">=4.x",
-    "redux-thunk": "^2.3.x"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/examples.ts",
-      "node_modules"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "html",
-      "json"
-    ],
-    "sourceMap": true,
-    "instrument": true
-  }
+	"name": "typescript-fsa-redux-thunk",
+	"version": "2.1.3",
+	"description": "TypeScript FSA utilities for redux-thunk",
+	"keywords": [
+		"redux",
+		"thunk",
+		"redux-thunk",
+		"typescript",
+		"typescript-fsa",
+		"action",
+		"action creator",
+		"flux standard action"
+	],
+	"main": "lib/index.js",
+	"typings": "lib/index.d.ts",
+	"files": [
+		"lib",
+		"src"
+	],
+	"repository": "xdave/typescript-fsa-redux-thunk",
+	"scripts": {
+		"clean": "rimraf lib .nyc_output coverage",
+		"lint": "tslint --project tsconfig.json -c tslint.json",
+		"test": "cross-env TS_NODE_PROJECT=tsconfig.tests.json nyc mocha --exclude src/examples.ts",
+		"test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts",
+		"posttest": "test $CI && codecov -f coverage/*.json || true",
+		"build:lib": "tsc",
+		"build": "npm -s run build:lib"
+	},
+	"author": "Dave Gradwell <deft.productions@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/xdave/typescript-fsa-redux-thunk/issues"
+	},
+	"homepage": "https://github.com/xdave/typescript-fsa-redux-thunk#readme",
+	"devDependencies": {
+		"@types/chai": "^4.1.7",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.0.10",
+		"@types/redux-mock-store": "^1.0.1",
+		"chai": "^4.2.0",
+		"codecov": "^3.5.0",
+		"cross-env": "^5.2.0",
+		"isomorphic-fetch": "^2.2.1",
+		"mocha": "^6.1.4",
+		"nyc": "^14.1.1",
+		"redux": "^4.x",
+		"redux-mock-store": "^1.5.3",
+		"rimraf": "^2.6.3",
+		"ts-node": "^8.3.0",
+		"tslib": "^1.10.0",
+		"tslint": "^5.18.0",
+		"typescript": "^3.5.2",
+		"typescript-fsa-reducers": "^1.2.1"
+	},
+	"dependencies": {
+		"redux-thunk": "^2.3.0",
+		"typescript-fsa": "^3.0.0-beta-2"
+	},
+	"peerDependencies": {
+		"redux": ">=4.x",
+		"redux-thunk": "^2.3.x"
+	},
+	"nyc": {
+		"include": [
+			"src/**/*.ts"
+		],
+		"exclude": [
+			"src/**/*.spec.ts",
+			"src/examples.ts",
+			"node_modules"
+		],
+		"extension": [
+			".ts"
+		],
+		"require": [
+			"ts-node/register"
+		],
+		"reporter": [
+			"text-summary",
+			"html",
+			"json"
+		],
+		"sourceMap": true,
+		"instrument": true
+	}
 }
