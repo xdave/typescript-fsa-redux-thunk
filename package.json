@@ -1,6 +1,6 @@
 {
 	"name": "typescript-fsa-redux-thunk",
-	"version": "2.1.5",
+	"version": "2.1.6",
 	"description": "TypeScript FSA utilities for redux-thunk",
 	"keywords": [
 		"redux",
@@ -56,7 +56,7 @@
 	},
 	"dependencies": {
 		"redux-thunk": "^2.3.0",
-		"typescript-fsa": "^3.0.0-beta-2"
+		"typescript-fsa": "^3.0.0"
 	},
 	"peerDependencies": {
 		"redux": ">=4.x",
