@@ -67,6 +67,9 @@ const test5 = createAsync<Params, Succ, OtherError>(
 	},
 );
 
+const test6 = createAsync('test6', Promise.resolve);
+const test7 = createAsync('test7', () => { /* noop */ });
+
 const initial: State = { foo: 'test' };
 
 const reducer = reducerWithInitialState(initial)
@@ -88,6 +91,12 @@ const reducer = reducerWithInitialState(initial)
 		...state,
 		otherError,
 	}))
+	.case(test6.async.started, state => state)
+	.case(test6.async.failed, state => state)
+	.case(test6.async.done, state => state)
+	.case(test7.async.started, state => state)
+	.case(test7.async.failed, state => state)
+	.case(test7.async.done, state => state)
 	.build();
 
 describe('typescript-fsa-redux-thunk', () => {
