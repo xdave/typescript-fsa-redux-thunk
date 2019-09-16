@@ -19,7 +19,7 @@ export declare type ThunkReturnType<R> = R extends void ? unknown : R extends Pr
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export declare const asyncFactory: <S>(create: ActionCreatorFactory) => <P, R, E extends Error = Error>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S>) => ThunkFunction<S, P, ThunkReturnType<R>, E>;
+export declare const asyncFactory: <S>(create: ActionCreatorFactory) => <P, R, E = Error>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S>) => ThunkFunction<S, P, ThunkReturnType<R>, E>;
 export interface ThunkFunction<S, P, R, E> {
     (params?: P): ((dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S) => Promise<R>);
     action(params?: P): ReturnType<this>;

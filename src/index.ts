@@ -34,20 +34,19 @@ export const asyncFactory = <S>(create: ActionCreatorFactory) =>
 		type: string,
 		worker: AsyncWorker<P, ThunkReturnType<R>, S>,
 	) => {
+		type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E>;
 		const async = create.async<P, ThunkReturnType<R>, E>(type);
-		const fn: ThunkFunction<S, P, ThunkReturnType<R>, E> = (params) => (
-			async (dispatch, getState) => {
-				try {
-					dispatch(async.started(params!));
-					const result = await worker(params!, dispatch, getState);
-					dispatch(async.done({ params: params!, result }));
-					return result;
-				} catch (error) {
-					dispatch(async.failed({ params: params!, error }));
-					throw error;
-				}
-			}
-		);
+		const fn: Procedure = (params) => (dispatch, getState) => Promise.resolve()
+			.then(() => { dispatch(async.started(params!)); })
+			.then(() => worker(params!, dispatch, getState))
+			.then((result) => {
+				dispatch(async.done({ params: params!, result }));
+				return result;
+			})
+			.catch((error) => {
+				dispatch(async.failed({ params: params!, error }));
+				return Promise.reject(error);
+			});
 		fn.action = fn;
 		fn.async = async;
 		return fn;
