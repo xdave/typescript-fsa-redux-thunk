@@ -55,11 +55,11 @@ export const asyncFactory = <S>(create: ActionCreatorFactory) =>
 
 
 export interface ThunkFunction<S, P, R, E> {
-	(params?: P): ReturnType<this['action']>;
-	action(params?: P): (
+	(params?: P): (
 		(dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S)
 		=> Promise<R>
 	);
+	action(params?: P): ReturnType<this>;
 	// tslint:disable-next-line: member-ordering
 	async: AsyncActionCreators<P, R, E>;
 }

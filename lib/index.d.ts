@@ -20,8 +20,9 @@ export declare type ThunkReturnType<R> = R extends void ? unknown : R extends Pr
  * And returns object with the async actions and the thunk itself
  */
 export declare const asyncFactory: <S>(create: ActionCreatorFactory) => <P, R, E extends Error = Error>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S>) => ThunkFunction<S, P, ThunkReturnType<R>, E>;
-interface ThunkFunction<S, P, R, E> {
+export interface ThunkFunction<S, P, R, E> {
     (params?: P): ((dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S) => Promise<R>);
+    action(params?: P): ReturnType<this>;
     async: AsyncActionCreators<P, R, E>;
 }
 /** Utility type for a function that takes paras and returns a redux-thunk */
