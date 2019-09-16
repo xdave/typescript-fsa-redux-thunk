@@ -16,10 +16,12 @@ export type AsyncWorker<P, R, S> = (
 	getState: () => S,
 ) => MaybePromise<R>;
 
-/** Work around for typescript-fsa issue #77 */
-export type ThunkReturnType<R> = R extends void
-	? unknown
-	: R extends PromiseLike<R> ? PromiseLike<R> : R;
+/** Workaround for typescript-fsa issue #77 */
+export type ThunkReturnType<T> = (
+	T extends void ? unknown :
+	T extends PromiseLike<T> ? PromiseLike<T> :
+	T
+);
 
 /**
  * Factory function to easily create a thunk
@@ -30,10 +32,7 @@ export type ThunkReturnType<R> = R extends void
  * And returns object with the async actions and the thunk itself
  */
 export const asyncFactory = <S>(create: ActionCreatorFactory) =>
-	<P, R, E extends Error = Error>(
-		type: string,
-		worker: AsyncWorker<P, ThunkReturnType<R>, S>,
-	) => {
+	<P, R, E = any>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S>) => {
 		type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E>;
 		const async = create.async<P, ThunkReturnType<R>, E>(type);
 		const fn: Procedure = (params) => (dispatch, getState) => Promise.resolve()
