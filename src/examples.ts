@@ -101,7 +101,7 @@ const reducer = reducerWithInitialState(initial)
 
 	try {
 		// See https://reqres.in/api/users for valid users on this site
-		await store.dispatch(login.action({
+		await store.dispatch(login({
 			email: 'eve.holt@reqres.in',
 			password: 'cityslicka',
 		}));
