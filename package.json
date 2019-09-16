@@ -3,37 +3,41 @@
 	"version": "2.1.6",
 	"description": "TypeScript FSA utilities for redux-thunk",
 	"keywords": [
-		"redux",
-		"thunk",
-		"redux-thunk",
-		"typescript",
-		"typescript-fsa",
 		"action",
 		"action creator",
-		"flux standard action"
+		"flux standard action",
+		"redux",
+		"redux-thunk",
+		"thunk",
+		"typescript",
+		"typescript-fsa"
 	],
-	"main": "lib/index.js",
-	"typings": "lib/index.d.ts",
+	"homepage": "https://github.com/xdave/typescript-fsa-redux-thunk#readme",
+	"bugs": {
+		"url": "https://github.com/xdave/typescript-fsa-redux-thunk/issues"
+	},
+	"repository": "xdave/typescript-fsa-redux-thunk",
+	"license": "MIT",
+	"author": "Dave Gradwell <deft.productions@gmail.com>",
 	"files": [
 		"lib",
 		"src"
 	],
-	"repository": "xdave/typescript-fsa-redux-thunk",
+	"main": "lib/index.js",
+	"typings": "lib/index.d.ts",
 	"scripts": {
+		"build": "npm -s run build:lib",
+		"build:lib": "tsc",
 		"clean": "rimraf lib .nyc_output coverage",
 		"lint": "tslint --project tsconfig.json -c tslint.json",
 		"test": "cross-env TS_NODE_PROJECT=tsconfig.tests.json nyc mocha --exclude src/examples.ts",
-		"test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts",
 		"posttest": "test $CI && codecov -f coverage/*.json || true",
-		"build:lib": "tsc",
-		"build": "npm -s run build:lib"
+		"test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts"
 	},
-	"author": "Dave Gradwell <deft.productions@gmail.com>",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/xdave/typescript-fsa-redux-thunk/issues"
+	"dependencies": {
+		"redux-thunk": "^2.3.0",
+		"typescript-fsa": "^3.0.0"
 	},
-	"homepage": "https://github.com/xdave/typescript-fsa-redux-thunk#readme",
 	"devDependencies": {
 		"@types/chai": "^4.2.2",
 		"@types/mocha": "^5.2.7",
@@ -53,10 +57,6 @@
 		"tslint": "^5.20.0",
 		"typescript": "^3.6.3",
 		"typescript-fsa-reducers": "^1.2.1"
-	},
-	"dependencies": {
-		"redux-thunk": "^2.3.0",
-		"typescript-fsa": "^3.0.0"
 	},
 	"peerDependencies": {
 		"redux": ">=4.x",
