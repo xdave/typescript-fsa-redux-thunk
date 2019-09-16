@@ -32,7 +32,10 @@ export type ThunkReturnType<T> = (
  * And returns object with the async actions and the thunk itself
  */
 export const asyncFactory = <S>(create: ActionCreatorFactory) =>
-	<P, R, E = any>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S>) => {
+	<P, R, E = any>(
+		type: string,
+		worker: AsyncWorker<P, ThunkReturnType<R>, S>,
+	) => {
 		type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E>;
 		const async = create.async<P, ThunkReturnType<R>, E>(type);
 		const fn: Procedure = (params) => (dispatch, getState) => Promise.resolve()
