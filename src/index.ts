@@ -48,16 +48,19 @@ export const asyncFactory = <S>(create: ActionCreatorFactory) =>
 				}
 			}
 		);
+		fn.action = fn;
 		fn.async = async;
 		return fn;
 	};
 
 
 export interface ThunkFunction<S, P, R, E> {
-	(params?: P): (
+	(params?: P): ReturnType<this['action']>;
+	action(params?: P): (
 		(dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S)
 		=> Promise<R>
 	);
+	// tslint:disable-next-line: member-ordering
 	async: AsyncActionCreators<P, R, E>;
 }
 
