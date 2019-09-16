@@ -1,5 +1,5 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk';
-import { ActionCreatorFactory, AnyAction } from 'typescript-fsa';
+import { ActionCreatorFactory, AnyAction, AsyncActionCreators } from 'typescript-fsa';
 
 /**
  * It's either a promise, or it isn't
@@ -33,21 +33,35 @@ export const asyncFactory = <S>(create: ActionCreatorFactory) =>
 	<P, R, E extends Error = Error>(
 		type: string,
 		worker: AsyncWorker<P, ThunkReturnType<R>, S>,
-	) => (new class ThunkFunction {
-		async = create.async<P, ThunkReturnType<R>, E>(type);
-		action = (params?: P) =>
-			async (dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S) => {
-				try {
-					dispatch(this.async.started(params!));
-					const result = await worker(params!, dispatch, getState);
-					dispatch(this.async.done({ params: params!, result }));
-					return result;
-				} catch (error) {
-					dispatch(this.async.failed({ params: params!, error }));
-					throw error;
-				}
-			}
-	}());
+	) => {
+		type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E>;
+		const async = create.async<P, ThunkReturnType<R>, E>(type);
+		const fn: Procedure = (params) => (dispatch, getState) => Promise.resolve()
+			.then(() => { dispatch(async.started(params!)); })
+			.then(() => worker(params!, dispatch, getState))
+			.then((result) => {
+				dispatch(async.done({ params: params!, result }));
+				return result;
+			})
+			.catch((error) => {
+				dispatch(async.failed({ params: params!, error }));
+				return Promise.reject(error);
+			});
+		fn.action = fn;
+		fn.async = async;
+		return fn;
+	};
+
+
+export interface ThunkFunction<S, P, R, E> {
+	(params?: P): (
+		(dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S)
+		=> Promise<R>
+	);
+	action(params?: P): ReturnType<this>;
+	// tslint:disable-next-line: member-ordering
+	async: AsyncActionCreators<P, R, E>;
+}
 
 /** Utility type for a function that takes paras and returns a redux-thunk */
 export type ThunkCreator<P, R, S> =

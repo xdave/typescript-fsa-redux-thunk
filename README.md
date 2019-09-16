@@ -21,7 +21,7 @@ dispatch, then all we want back is the return value (the action object).
 Coming soon: an example.  TL;DR: pass your async action creator into this before
 passing it to `bindActionCreators` or the `mapDispatchToProps` object (react-redux).
 
-### `asyncFactory<State>(ActionCreatorFactory): ((type: string, AsyncWorker) => ({ async: AsyncActionCreators, action: ThunkActionCreator }))`
+### `asyncFactory<State>(ActionCreatorFactory): ((type: string, AsyncWorker) => ({ (params?): ThunkActionCreator, async: AsyncActionCreators }))`
 Factory function to easily create a typescript-fsa redux thunk.
 
 **Example**
@@ -129,7 +129,7 @@ const reducer = reducerWithInitialState(initial)
 
 	try {
 		// See https://reqres.in/api/users for valid users on this site
-		await store.dispatch(login.action({
+		await store.dispatch(login({
 			email: 'eve.holt@reqres.in',
 			password: 'cityslicka'
 		}));
