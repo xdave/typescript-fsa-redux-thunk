@@ -1,5 +1,5 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk';
-import { ActionCreatorFactory, AnyAction, AsyncActionCreators } from 'typescript-fsa';
+import { ActionCreatorFactory, AnyAction, AsyncActionCreators, Meta } from 'typescript-fsa';
 
 /**
  * It's either a promise, or it isn't
@@ -33,14 +33,15 @@ export type ThunkReturnType<T> = (
  */
 export const asyncFactory = <S>(
 	create: ActionCreatorFactory,
-	resolve = Promise.resolve.bind(Promise),
+	resolve: () => Promise<void> = Promise.resolve.bind(Promise),
 ) =>
 	<P, R, E = any>(
 		type: string,
 		worker: AsyncWorker<P, ThunkReturnType<R>, S>,
+		commonMeta?: Meta,
 	) => {
 		type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E>;
-		const async = create.async<P, ThunkReturnType<R>, E>(type);
+		const async = create.async<P, ThunkReturnType<R>, E>(type, commonMeta);
 		const fn: Procedure = (params) => (dispatch, getState) => resolve()
 			.then(() => { dispatch(async.started(params!)); })
 			.then(() => worker(params!, dispatch, getState))
