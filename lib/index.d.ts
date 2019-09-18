@@ -1,5 +1,5 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk';
-import { ActionCreatorFactory, AnyAction } from 'typescript-fsa';
+import { ActionCreatorFactory, AnyAction, AsyncActionCreators } from 'typescript-fsa';
 /**
  * It's either a promise, or it isn't
  */
@@ -9,8 +9,8 @@ export declare type MaybePromise<T> = T | PromiseLike<T>;
  * return a promise; but, the result of the dispatch will be one.
  */
 export declare type AsyncWorker<P, R, S> = (params: P, dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S) => MaybePromise<R>;
-/** Work around for typescript-fsa issue #77 */
-export declare type ThunkReturnType<R> = R extends void ? unknown : R extends PromiseLike<R> ? PromiseLike<R> : R;
+/** Workaround for typescript-fsa issue #77 */
+export declare type ThunkReturnType<T> = (T extends void ? unknown : T extends PromiseLike<T> ? PromiseLike<T> : T);
 /**
  * Factory function to easily create a thunk
  * @param factory typescript-fsa action creator factory
@@ -19,10 +19,14 @@ export declare type ThunkReturnType<R> = R extends void ? unknown : R extends Pr
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export declare const asyncFactory: <S>(create: ActionCreatorFactory) => <P, R, E extends Error = Error>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S>) => {
-    async: import("typescript-fsa").AsyncActionCreators<P, ThunkReturnType<R>, E>;
-    action: (params?: P | undefined) => (dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S) => Promise<ThunkReturnType<R>>;
-};
+export declare const asyncFactory: <S>(create: ActionCreatorFactory, resolve?: () => Promise<void>) => <P, R, E = any>(type: string, worker: AsyncWorker<P, R extends void ? unknown : R extends PromiseLike<R> ? PromiseLike<R> : R, S>, commonMeta?: {
+    [key: string]: any;
+} | null | undefined) => ThunkFunction<S, P, R extends void ? unknown : R extends PromiseLike<R> ? PromiseLike<R> : R, E>;
+export interface ThunkFunction<S, P, R, E> {
+    (params?: P): ((dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S) => Promise<R>);
+    action(params?: P): ReturnType<this>;
+    async: AsyncActionCreators<P, R, E>;
+}
 /** Utility type for a function that takes paras and returns a redux-thunk */
 export declare type ThunkCreator<P, R, S> = (params?: P) => ThunkAction<PromiseLike<R>, S, any, AnyAction>;
 /** The result type for thunkToAction below */

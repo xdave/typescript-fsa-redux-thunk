@@ -46,10 +46,10 @@ const test3 = createAsync('test3', () => { throw fakeError; });
 const test4 = createAsync<Params, Succ>(
 	'test4',
 	async ({ param }, dispatch, getState) => {
-		await dispatch(test1.action({ param }));
-		await dispatch(test2.action());
+		await dispatch(test1({ param }));
+		await dispatch(test2());
 		try {
-			await dispatch(test3.action());
+			await dispatch(test3());
 		} catch (err) {
 			// noop
 		}
@@ -148,7 +148,7 @@ describe('typescript-fsa-redux-thunk', () => {
 			});
 		});
 		it('full dispatch (success)', async () => {
-			await store.dispatch(test1.action({ param: 1 }));
+			await store.dispatch(test1({ param: 1 }));
 
 			const actions = store.getActions();
 			expect(actions).to.eql([
@@ -168,7 +168,7 @@ describe('typescript-fsa-redux-thunk', () => {
 		it('full dispatch (failure)', async () => {
 			let thrown;
 			try {
-				await store.dispatch(test1.action({ param: 2 }));
+				await store.dispatch(test1({ param: 2 }));
 			} catch (err) {
 				thrown = err;
 			}
@@ -194,7 +194,7 @@ describe('typescript-fsa-redux-thunk', () => {
 		it('full dispatch (failure with error type)', async () => {
 			let thrown;
 			try {
-				await store.dispatch(test5.action({ param: 2 }));
+				await store.dispatch(test5({ param: 2 }));
 			} catch (err) {
 				thrown = err;
 			}
@@ -226,7 +226,7 @@ describe('typescript-fsa-redux-thunk', () => {
 			});
 		});
 		it('dispatch without an argument', async () => {
-			await store.dispatch(test2.action());
+			await store.dispatch(test2());
 
 			const actions = store.getActions();
 			expect(actions).to.eql([
@@ -247,7 +247,7 @@ describe('typescript-fsa-redux-thunk', () => {
 		it('dispatch without an argument (failure)', async () => {
 			let thrown;
 			try {
-				await store.dispatch(test3.action());
+				await store.dispatch(test3());
 			} catch (err) {
 				thrown = err;
 			}
@@ -272,7 +272,7 @@ describe('typescript-fsa-redux-thunk', () => {
 		});
 
 		it('full test', async () => {
-			await store.dispatch(test4.action({ param: 1 }));
+			await store.dispatch(test4({ param: 1 }));
 
 			const actions = store.getActions();
 			expect(actions).to.eql([
@@ -325,12 +325,12 @@ describe('typescript-fsa-redux-thunk', () => {
 		});
 
 		it('thunkToAction', async () => {
-			const action = thunkToAction(successTest.action);
-			expect(action).to.eql(successTest.action);
+			const action = thunkToAction(successTest);
+			expect(action).to.eql(successTest);
 		});
 
 		it('reducer test', async () => {
-			await store.dispatch(test4.action({ param: 1 }));
+			await store.dispatch(test4({ param: 1 }));
 
 			const [started, done] = store.getActions().filter(action =>
 				action.type.includes('test4'));
