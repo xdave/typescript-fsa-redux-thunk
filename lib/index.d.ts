@@ -8,7 +8,7 @@ export declare type MaybePromise<T> = T | PromiseLike<T>;
  * A redux-thunk with the params as the first argument.  You don't have to
  * return a promise; but, the result of the dispatch will be one.
  */
-export declare type AsyncWorker<P, R, S> = (params: P, dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S) => MaybePromise<R>;
+export declare type AsyncWorker<P, R, S, A> = (params: P, dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S, extraArgument: A) => MaybePromise<R>;
 /** Workaround for typescript-fsa issue #77 */
 export declare type ThunkReturnType<T> = (T extends void ? unknown : T extends PromiseLike<T> ? PromiseLike<T> : T);
 /**
@@ -19,11 +19,11 @@ export declare type ThunkReturnType<T> = (T extends void ? unknown : T extends P
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export declare const asyncFactory: <S>(create: ActionCreatorFactory, resolve?: () => Promise<void>) => <P, R, E = any>(type: string, worker: AsyncWorker<P, R extends void ? unknown : R extends PromiseLike<R> ? PromiseLike<R> : R, S>, commonMeta?: {
+export declare const asyncFactory: <S>(create: ActionCreatorFactory, resolve?: () => Promise<void>) => <P, R, E = any, A = any>(type: string, worker: AsyncWorker<P, R extends void ? unknown : R extends PromiseLike<R> ? PromiseLike<R> : R, S, A>, commonMeta?: {
     [key: string]: any;
-} | null | undefined) => ThunkFunction<S, P, R extends void ? unknown : R extends PromiseLike<R> ? PromiseLike<R> : R, E>;
-export interface ThunkFunction<S, P, R, E> {
-    (params?: P): ((dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S) => Promise<R>);
+} | null | undefined) => ThunkFunction<S, P, R extends void ? unknown : R extends PromiseLike<R> ? PromiseLike<R> : R, E, A>;
+export interface ThunkFunction<S, P, R, E, A> {
+    (params?: P): ((dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S, extraArgument: A) => Promise<R>);
     action(params?: P): ReturnType<this>;
     async: AsyncActionCreators<P, R, E>;
 }

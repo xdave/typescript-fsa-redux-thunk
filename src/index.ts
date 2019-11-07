@@ -10,10 +10,11 @@ export type MaybePromise<T> = T | PromiseLike<T>;
  * A redux-thunk with the params as the first argument.  You don't have to
  * return a promise; but, the result of the dispatch will be one.
  */
-export type AsyncWorker<P, R, S> = (
+export type AsyncWorker<P, R, S, A> = (
 	params: P,
 	dispatch: ThunkDispatch<S, any, AnyAction>,
 	getState: () => S,
+	extraArgument: A,
 ) => MaybePromise<R>;
 
 /** Workaround for typescript-fsa issue #77 */
@@ -35,33 +36,38 @@ export const asyncFactory = <S>(
 	create: ActionCreatorFactory,
 	resolve: () => Promise<void> = Promise.resolve.bind(Promise),
 ) =>
-	<P, R, E = any>(
+	<P, R, E = any, A = any>(
 		type: string,
-		worker: AsyncWorker<P, ThunkReturnType<R>, S>,
+		worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
 		commonMeta?: Meta,
 	) => {
-		type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E>;
+		type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
 		const async = create.async<P, ThunkReturnType<R>, E>(type, commonMeta);
-		const fn: Procedure = (params) => (dispatch, getState) => resolve()
-			.then(() => { dispatch(async.started(params!)); })
-			.then(() => worker(params!, dispatch, getState))
-			.then((result) => {
-				dispatch(async.done({ params: params!, result }));
-				return result;
-			})
-			.catch((error) => {
-				dispatch(async.failed({ params: params!, error }));
-				throw error;
-			});
+		const fn: Procedure =
+			(params) => (dispatch, getState, extraArgument) => resolve()
+				.then(() => { dispatch(async.started(params!)); })
+				.then(() => worker(params!, dispatch, getState, extraArgument))
+				.then((result) => {
+					dispatch(async.done({ params: params!, result }));
+					return result;
+				})
+				.catch((error) => {
+					dispatch(async.failed({ params: params!, error }));
+					throw error;
+				});
 		fn.action = fn;
 		fn.async = async;
 		return fn;
 	};
 
 
-export interface ThunkFunction<S, P, R, E> {
+export interface ThunkFunction<S, P, R, E, A> {
 	(params?: P): (
-		(dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S)
+		(
+			dispatch: ThunkDispatch<S, any, AnyAction>,
+			getState: () => S,
+			extraArgument: A,
+		)
 		=> Promise<R>
 	);
 	action(params?: P): ReturnType<this>;
