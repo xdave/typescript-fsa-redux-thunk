@@ -6,7 +6,7 @@ import actionCreatorFactory from 'typescript-fsa';
 import { asyncFactory } from '.';
 
 /** You can optionally use custom Error types */
-class CustomError extends Error { }
+class CustomError extends Error {}
 
 /** Parameters used for logging in */
 interface LoginParams {
@@ -101,10 +101,12 @@ const reducer = reducerWithInitialState(initial)
 
 	try {
 		// See https://reqres.in/api/users for valid users on this site
-		await store.dispatch(login({
-			email: 'eve.holt@reqres.in',
-			password: 'cityslicka',
-		}));
+		await store.dispatch(
+			login({
+				email: 'eve.holt@reqres.in',
+				password: 'cityslicka',
+			}),
+		);
 
 		const { title, userToken } = store.getState();
 

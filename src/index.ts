@@ -1,5 +1,10 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk';
-import { ActionCreatorFactory, AnyAction, AsyncActionCreators, Meta } from 'typescript-fsa';
+import {
+	ActionCreatorFactory,
+	AnyAction,
+	AsyncActionCreators,
+	Meta,
+} from 'typescript-fsa';
 
 /**
  * It's either a promise, or it isn't
@@ -18,11 +23,11 @@ export type AsyncWorker<P, R, S, A> = (
 ) => MaybePromise<R>;
 
 /** Workaround for typescript-fsa issue #77 */
-export type ThunkReturnType<T> = (
-	T extends void ? unknown :
-	T extends PromiseLike<T> ? PromiseLike<T> :
-	T
-);
+export type ThunkReturnType<T> = T extends void
+	? unknown
+	: T extends PromiseLike<T>
+	? PromiseLike<T>
+	: T;
 
 /**
  * Factory function to easily create a thunk
@@ -32,52 +37,50 @@ export type ThunkReturnType<T> = (
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export const asyncFactory = <S>(
+export const asyncFactory = <S, A = any>(
 	create: ActionCreatorFactory,
 	resolve: () => Promise<void> = Promise.resolve.bind(Promise),
-) =>
-	<P, R, E = any, A = any>(
-		type: string,
-		worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
-		commonMeta?: Meta,
-	) => {
-		type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
-		const async = create.async<P, ThunkReturnType<R>, E>(type, commonMeta);
-		const fn: Procedure =
-			(params) => (dispatch, getState, extraArgument) => resolve()
-				.then(() => { dispatch(async.started(params!)); })
-				.then(() => worker(params!, dispatch, getState, extraArgument))
-				.then((result) => {
-					dispatch(async.done({ params: params!, result }));
-					return result;
-				})
-				.catch((error) => {
-					dispatch(async.failed({ params: params!, error }));
-					throw error;
-				});
-		fn.action = fn;
-		fn.async = async;
-		return fn;
-	};
-
+) => <P, R, E = any>(
+	type: string,
+	worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
+	commonMeta?: Meta,
+) => {
+	type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
+	const async = create.async<P, ThunkReturnType<R>, E>(type, commonMeta);
+	const fn: Procedure = params => (dispatch, getState, extraArgument) =>
+		resolve()
+			.then(() => {
+				dispatch(async.started(params!));
+			})
+			.then(() => worker(params!, dispatch, getState, extraArgument))
+			.then(result => {
+				dispatch(async.done({ params: params!, result }));
+				return result;
+			})
+			.catch(error => {
+				dispatch(async.failed({ params: params!, error }));
+				throw error;
+			});
+	fn.action = fn;
+	fn.async = async;
+	return fn;
+};
 
 export interface ThunkFunction<S, P, R, E, A> {
 	(params?: P): (
-		(
-			dispatch: ThunkDispatch<S, any, AnyAction>,
-			getState: () => S,
-			extraArgument: A,
-		)
-		=> Promise<R>
-	);
+		dispatch: ThunkDispatch<S, any, AnyAction>,
+		getState: () => S,
+		extraArgument: A,
+	) => Promise<R>;
 	action(params?: P): ReturnType<this>;
 	// tslint:disable-next-line: member-ordering
 	async: AsyncActionCreators<P, R, E>;
 }
 
 /** Utility type for a function that takes paras and returns a redux-thunk */
-export type ThunkCreator<P, R, S> =
-	(params?: P) => ThunkAction<PromiseLike<R>, S, any, AnyAction>;
+export type ThunkCreator<P, R, S> = (
+	params?: P,
+) => ThunkAction<PromiseLike<R>, S, any, AnyAction>;
 
 /** The result type for thunkToAction below */
 export type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
