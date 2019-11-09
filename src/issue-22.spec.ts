@@ -34,7 +34,7 @@ const reducer = reducerWithInitialState(initialState)
 	.build();
 
 describe(`issue #22`, () => {
-	it(`should be able to stuff`, async () => {
+	it(`should be able to pass the extraArgument from middleware`, async () => {
 		/**
 		 * You need to cast the type here, as the overload for withExtraArgument
 		 * is completely useless.
