@@ -32,11 +32,11 @@ export type ThunkReturnType<T> = (
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export const asyncFactory = <S>(
+export const asyncFactory = <S, A = any>(
 	create: ActionCreatorFactory,
 	resolve: () => Promise<void> = Promise.resolve.bind(Promise),
 ) =>
-	<P, R, E = any, A = any>(
+	<P, R, E = any>(
 		type: string,
 		worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
 		commonMeta?: Meta,
