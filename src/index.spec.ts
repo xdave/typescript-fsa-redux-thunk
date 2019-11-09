@@ -12,7 +12,7 @@ interface Ext {
 
 const fakeError = new Error('Fake Error');
 
-class OtherError extends Error { }
+class OtherError extends Error {}
 
 const otherError = new OtherError('Another fake error');
 
@@ -23,13 +23,17 @@ interface State {
 	otherError?: OtherError;
 }
 
-interface Params { param: number; }
+interface Params {
+	param: number;
+}
 type Succ = string;
 
 const create = factory('test');
 const createAsync = asyncFactory<State>(create);
 
-const successTest = createAsync('success', () => { /* noop */ });
+const successTest = createAsync('success', () => {
+	/* noop */
+});
 // const failureTest = createAsync('failure', () => { throw fakeError; });
 
 const test1 = createAsync<Params, Succ>('test1', async ({ param }) => {
@@ -41,7 +45,9 @@ const test1 = createAsync<Params, Succ>('test1', async ({ param }) => {
 
 const test2 = createAsync('test2', () => '');
 
-const test3 = createAsync('test3', () => { throw fakeError; });
+const test3 = createAsync('test3', () => {
+	throw fakeError;
+});
 
 const test4 = createAsync<Params, Succ>(
 	'test4',
@@ -68,7 +74,9 @@ const test5 = createAsync<Params, Succ, OtherError>(
 );
 
 const test6 = createAsync('test6', Promise.resolve);
-const test7 = createAsync('test7', () => { /* noop */ });
+const test7 = createAsync('test7', () => {
+	/* noop */
+});
 
 const initial: State = { foo: 'test' };
 
@@ -120,10 +128,12 @@ describe('typescript-fsa-redux-thunk', () => {
 			});
 		});
 		it('failed', () => {
-			const result = store.dispatch(test1.async.failed({
-				params: { param: 1 },
-				error: fakeError,
-			}));
+			const result = store.dispatch(
+				test1.async.failed({
+					params: { param: 1 },
+					error: fakeError,
+				}),
+			);
 			expect(result).to.eql({
 				type: 'test/test1_FAILED',
 				error: true,
@@ -135,10 +145,12 @@ describe('typescript-fsa-redux-thunk', () => {
 		});
 		it('done', async () => {
 			const promise = await Promise.resolve('');
-			const result = store.dispatch(test1.async.done({
-				params: { param: 1 },
-				result: promise,
-			}));
+			const result = store.dispatch(
+				test1.async.done({
+					params: { param: 1 },
+					result: promise,
+				}),
+			);
 			expect(result).to.eql({
 				type: 'test/test1_DONE',
 				payload: {
@@ -332,8 +344,9 @@ describe('typescript-fsa-redux-thunk', () => {
 		it('reducer test', async () => {
 			await store.dispatch(test4({ param: 1 }));
 
-			const [started, done] = store.getActions().filter(action =>
-				action.type.includes('test4'));
+			const [started, done] = store
+				.getActions()
+				.filter(action => action.type.includes('test4'));
 
 			const beforeState = store.getState();
 			expect(beforeState).to.eql(initial);
