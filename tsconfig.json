@@ -2,12 +2,9 @@
 	"compilerOptions": {
 		"target": "es5",
 		"module": "commonjs",
-		"lib": [
-			"dom",
-			"esnext"
-		],
+		"lib": ["dom", "esnext"],
 		"declaration": true,
-		"declarationDir": "lib",
+		"declarationMap": true,
 		"outDir": "lib",
 		"strict": true,
 		"strictFunctionTypes": true,
@@ -20,10 +17,6 @@
 		"sourceMap": true,
 		"esModuleInterop": true
 	},
-	"include": [
-		"src"
-	],
-	"exclude": [
-		"src/**/*.spec.ts"
-	]
+	"include": ["src"],
+	"exclude": ["src/**/*.spec.ts"]
 }

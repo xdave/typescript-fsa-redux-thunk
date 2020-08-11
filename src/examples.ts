@@ -73,7 +73,7 @@ const reducer = reducerWithInitialState(initial)
 		...state,
 		title,
 	}))
-	.case(login.async.started, state => ({
+	.case(login.async.started, (state) => ({
 		...state,
 		loggingIn: true,
 		error: undefined,

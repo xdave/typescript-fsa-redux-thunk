@@ -6,6 +6,16 @@ import {
 	Meta,
 } from 'typescript-fsa';
 
+/* tslint:disable */
+/**
+ * This interface can be augmented by users to add default types for the root state when
+ * using `typescript-fsa-redux-thunk`.
+ * Use module augmentation to append your own type definition in a your_custom_type.d.ts file.
+ * https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
+ */
+/* tslint:enable */
+export interface DefaultRootState {}
+
 /**
  * It's either a promise, or it isn't
  */
@@ -15,7 +25,7 @@ export type MaybePromise<T> = T | PromiseLike<T>;
  * A redux-thunk with the params as the first argument.  You don't have to
  * return a promise; but, the result of the dispatch will be one.
  */
-export type AsyncWorker<P, R, S, A> = (
+export type AsyncWorker<P, R, S = DefaultRootState, A = unknown> = (
 	params: P,
 	dispatch: ThunkDispatch<S, any, AnyAction>,
 	getState: () => S,
@@ -37,27 +47,27 @@ export type ThunkReturnType<T> = T extends void
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export const asyncFactory = <S, A = any>(
+export const asyncFactory = <S = DefaultRootState, A = unknown>(
 	create: ActionCreatorFactory,
 	resolve: () => Promise<void> = Promise.resolve.bind(Promise),
-) => <P, R, E = any>(
+) => <P, R, E = unknown>(
 	type: string,
 	worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
 	commonMeta?: Meta,
 ) => {
 	type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
 	const async = create.async<P, ThunkReturnType<R>, E>(type, commonMeta);
-	const fn: Procedure = params => (dispatch, getState, extraArgument) =>
+	const fn: Procedure = (params) => (dispatch, getState, extraArgument) =>
 		resolve()
 			.then(() => {
 				dispatch(async.started(params!));
 			})
 			.then(() => worker(params!, dispatch, getState, extraArgument))
-			.then(result => {
+			.then((result) => {
 				dispatch(async.done({ params: params!, result }));
 				return result;
 			})
-			.catch(error => {
+			.catch((error) => {
 				dispatch(async.failed({ params: params!, error }));
 				throw error;
 			});
@@ -78,7 +88,7 @@ export interface ThunkFunction<S, P, R, E, A> {
 }
 
 /** Utility type for a function that takes paras and returns a redux-thunk */
-export type ThunkCreator<P, R, S> = (
+export type ThunkCreator<P, R, S = DefaultRootState> = (
 	params?: P,
 ) => ThunkAction<PromiseLike<R>, S, any, AnyAction>;
 
@@ -92,7 +102,7 @@ export type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
  * @param thunkCreator The thunk action creator
  * @returns thunkAction as if it was bound
  */
-export const thunkToAction = <P, R, S>(
+export const thunkToAction = <P, R, S = DefaultRootState>(
 	thunkCreator: ThunkCreator<P, R, S>,
 ): ThunkFn<P, R> => thunkCreator as any;
 

@@ -12,62 +12,28 @@
 		"typescript",
 		"typescript-fsa"
 	],
-	"homepage": "https://github.com/xdave/typescript-fsa-redux-thunk#readme",
-	"bugs": {
-		"url": "https://github.com/xdave/typescript-fsa-redux-thunk/issues"
-	},
+	"homepage": "https://github.com/xdave/typescript-fsa-redux-thunk",
+	"bugs": "https://github.com/xdave/typescript-fsa-redux-thunk/issues",
 	"repository": "xdave/typescript-fsa-redux-thunk",
 	"license": "MIT",
 	"author": "Dave Gradwell <deft.productions@gmail.com>",
+	"main": "lib/index.js",
+	"typings": "lib/index.d.ts",
 	"files": [
 		"lib",
 		"src"
 	],
-	"main": "lib/index.js",
-	"typings": "lib/index.d.ts",
 	"scripts": {
 		"build": "npm -s run build:lib",
 		"build:lib": "tsc",
 		"clean": "rimraf lib .nyc_output coverage",
-		"lint": "tslint --project tsconfig.json -c tslint.json",
-		"format": "prettier --write \"src/**/*.ts\"",
-		"test": "cross-env TS_NODE_PROJECT=tsconfig.tests.json nyc mocha --exclude src/examples.ts",
+		"format": "prettier --write .",
+		"lint": "tslint -p .",
+		"test": "cross-env TS_NODE_PROJECT=tsconfig.tests.json nyc mocha",
 		"posttest": "test $CI && codecov -f coverage/*.json || true",
 		"test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts"
 	},
-	"dependencies": {
-		"redux-thunk": "^2.3.0",
-		"typescript-fsa": "^3.0.0"
-	},
-	"devDependencies": {
-		"@types/chai": "^4.2.4",
-		"@types/mocha": "^5.2.7",
-		"@types/node": "^12.12.6",
-		"@types/redux-mock-store": "^1.0.1",
-		"chai": "^4.2.0",
-		"codecov": "^3.6.1",
-		"cross-env": "^6.0.3",
-		"isomorphic-fetch": "^2.2.1",
-		"mocha": "^6.2.2",
-		"nyc": "^14.1.1",
-		"prettier": "^1.19.1",
-		"redux": "^4.x",
-		"redux-mock-store": "^1.5.3",
-		"rimraf": "^3.0.0",
-		"ts-node": "^8.4.1",
-		"tslib": "^1.10.0",
-		"tslint": "^5.20.1",
-		"typescript": "^3.6.4",
-		"typescript-fsa-reducers": "^1.2.1"
-	},
-	"peerDependencies": {
-		"redux": ">=4.x",
-		"redux-thunk": "^2.3.x"
-	},
 	"nyc": {
-		"include": [
-			"src/**/*.ts"
-		],
 		"exclude": [
 			"src/**/*.spec.ts",
 			"src/examples.ts",
@@ -76,15 +42,47 @@
 		"extension": [
 			".ts"
 		],
-		"require": [
-			"ts-node/register"
+		"include": [
+			"src/**/*.ts"
 		],
+		"instrument": true,
 		"reporter": [
 			"text-summary",
 			"html",
 			"json"
 		],
-		"sourceMap": true,
-		"instrument": true
+		"require": [
+			"ts-node/register"
+		],
+		"sourceMap": true
+	},
+	"dependencies": {
+		"redux-thunk": "^2.3.0",
+		"typescript-fsa": "^3.0.0"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.2.12",
+		"@types/mocha": "^8.0.2",
+		"@types/node": "^14.0.27",
+		"@types/redux-mock-store": "^1.0.2",
+		"chai": "^4.2.0",
+		"codecov": "^3.7.2",
+		"cross-env": "^7.0.2",
+		"isomorphic-fetch": "^2.2.1",
+		"mocha": "^8.1.1",
+		"nyc": "^15.1.0",
+		"prettier": "^2.0.5",
+		"redux": "^4.0.5",
+		"redux-mock-store": "^1.5.4",
+		"rimraf": "^3.0.2",
+		"ts-node": "^8.10.2",
+		"tslib": "^2.0.1",
+		"tslint": "^5.20.1",
+		"typescript": "^3.9.7",
+		"typescript-fsa-reducers": "^1.2.2"
+	},
+	"peerDependencies": {
+		"redux": ">=4.x",
+		"redux-thunk": "^2.3.x"
 	}
 }

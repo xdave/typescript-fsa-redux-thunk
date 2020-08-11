@@ -1,6 +1,14 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk';
 import { ActionCreatorFactory, AnyAction, AsyncActionCreators } from 'typescript-fsa';
 /**
+ * This interface can be augmented by users to add default types for the root state when
+ * using `typescript-fsa-redux-thunk`.
+ * Use module augmentation to append your own type definition in a your_custom_type.d.ts file.
+ * https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
+ */
+export interface DefaultRootState {
+}
+/**
  * It's either a promise, or it isn't
  */
 export declare type MaybePromise<T> = T | PromiseLike<T>;
@@ -8,7 +16,7 @@ export declare type MaybePromise<T> = T | PromiseLike<T>;
  * A redux-thunk with the params as the first argument.  You don't have to
  * return a promise; but, the result of the dispatch will be one.
  */
-export declare type AsyncWorker<P, R, S, A> = (params: P, dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S, extraArgument: A) => MaybePromise<R>;
+export declare type AsyncWorker<P, R, S = DefaultRootState, A = unknown> = (params: P, dispatch: ThunkDispatch<S, any, AnyAction>, getState: () => S, extraArgument: A) => MaybePromise<R>;
 /** Workaround for typescript-fsa issue #77 */
 export declare type ThunkReturnType<T> = T extends void ? unknown : T extends PromiseLike<T> ? PromiseLike<T> : T;
 /**
@@ -19,7 +27,7 @@ export declare type ThunkReturnType<T> = T extends void ? unknown : T extends Pr
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export declare const asyncFactory: <S, A = any>(create: ActionCreatorFactory, resolve?: () => Promise<void>) => <P, R, E = any>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S, A>, commonMeta?: {
+export declare const asyncFactory: <S = DefaultRootState, A = unknown>(create: ActionCreatorFactory, resolve?: () => Promise<void>) => <P, R, E = unknown>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S, A>, commonMeta?: {
     [key: string]: any;
 } | null | undefined) => ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
 export interface ThunkFunction<S, P, R, E, A> {
@@ -28,7 +36,7 @@ export interface ThunkFunction<S, P, R, E, A> {
     async: AsyncActionCreators<P, R, E>;
 }
 /** Utility type for a function that takes paras and returns a redux-thunk */
-export declare type ThunkCreator<P, R, S> = (params?: P) => ThunkAction<PromiseLike<R>, S, any, AnyAction>;
+export declare type ThunkCreator<P, R, S = DefaultRootState> = (params?: P) => ThunkAction<PromiseLike<R>, S, any, AnyAction>;
 /** The result type for thunkToAction below */
 export declare type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
 /**
@@ -38,5 +46,6 @@ export declare type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
  * @param thunkCreator The thunk action creator
  * @returns thunkAction as if it was bound
  */
-export declare const thunkToAction: <P, R, S>(thunkCreator: ThunkCreator<P, R, S>) => ThunkFn<P, R>;
+export declare const thunkToAction: <P, R, S = DefaultRootState>(thunkCreator: ThunkCreator<P, R, S>) => ThunkFn<P, R>;
 export default asyncFactory;
+//# sourceMappingURL=index.d.ts.map
