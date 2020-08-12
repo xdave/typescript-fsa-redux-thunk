@@ -43,7 +43,7 @@ describe(`issue #17`, () => {
 
 		reducerWithInitialState({ foo: 'foo' }).case(
 			example.async.done,
-			(state, { params, result }) => ({ foo: result }),
+			(state, { result }) => ({ foo: result }),
 		);
 	});
 
@@ -60,7 +60,7 @@ describe(`issue #17`, () => {
 
 		reducerWithoutInitialState().case(
 			example.async.done,
-			(state, { params, result }) => ({ foo: result }),
+			(state, { result }) => ({ foo: result }),
 		);
 	});
 });

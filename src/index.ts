@@ -27,7 +27,7 @@ export type MaybePromise<T> = T | PromiseLike<T>;
  */
 export type AsyncWorker<P, R, S = DefaultRootState, A = unknown> = (
 	params: P,
-	dispatch: ThunkDispatch<S, any, AnyAction>,
+	dispatch: ThunkDispatch<S, A, AnyAction>,
 	getState: () => S,
 	extraArgument: A,
 ) => MaybePromise<R>;
@@ -78,7 +78,7 @@ export const asyncFactory = <S = DefaultRootState, A = unknown>(
 
 export interface ThunkFunction<S, P, R, E, A> {
 	(params?: P): (
-		dispatch: ThunkDispatch<S, any, AnyAction>,
+		dispatch: ThunkDispatch<S, A, AnyAction>,
 		getState: () => S,
 		extraArgument: A,
 	) => Promise<R>;
@@ -90,7 +90,7 @@ export interface ThunkFunction<S, P, R, E, A> {
 /** Utility type for a function that takes paras and returns a redux-thunk */
 export type ThunkCreator<P, R, S = DefaultRootState> = (
 	params?: P,
-) => ThunkAction<PromiseLike<R>, S, any, AnyAction>;
+) => ThunkAction<PromiseLike<R>, S, unknown, AnyAction>;
 
 /** The result type for thunkToAction below */
 export type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
