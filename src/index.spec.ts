@@ -49,7 +49,7 @@ const test3 = createAsync('test3', () => {
 	throw fakeError;
 });
 
-const test4 = createAsync<Params, Succ>(
+const test4 = createAsync<Params, Succ, Error>(
 	'test4',
 	async ({ param }, dispatch, getState) => {
 		await dispatch(test1({ param }));
@@ -81,7 +81,7 @@ const test7 = createAsync('test7', () => {
 const initial: State = { foo: 'test' };
 
 const reducer = reducerWithInitialState(initial)
-	.case(test4.async.started, state => ({
+	.case(test4.async.started, (state) => ({
 		...state,
 		updating: true,
 	}))
@@ -99,12 +99,12 @@ const reducer = reducerWithInitialState(initial)
 		...state,
 		otherError,
 	}))
-	.case(test6.async.started, state => state)
-	.case(test6.async.failed, state => state)
-	.case(test6.async.done, state => state)
-	.case(test7.async.started, state => state)
-	.case(test7.async.failed, state => state)
-	.case(test7.async.done, state => state)
+	.case(test6.async.started, (state) => state)
+	.case(test6.async.failed, (state) => state)
+	.case(test6.async.done, (state) => state)
+	.case(test7.async.started, (state) => state)
+	.case(test7.async.failed, (state) => state)
+	.case(test7.async.done, (state) => state)
 	.build();
 
 describe('typescript-fsa-redux-thunk', () => {
@@ -346,7 +346,7 @@ describe('typescript-fsa-redux-thunk', () => {
 
 			const [started, done] = store
 				.getActions()
-				.filter(action => action.type.includes('test4'));
+				.filter((action) => action.type.includes('test4'));
 
 			const beforeState = store.getState();
 			expect(beforeState).to.eql(initial);

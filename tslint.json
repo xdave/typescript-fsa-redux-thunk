@@ -1,16 +1,10 @@
 {
-	"extends": [
-		"tslint:latest"
-	],
+	"extends": ["tslint:latest"],
 	"rules": {
 		"no-shadowed-variable": false,
 		"no-empty-interface": false,
 		"no-string-literal": false,
-		"indent": [
-			true,
-			"tabs",
-			4
-		],
+		"indent": [true, "tabs", 4],
 		"no-unused-expression": false,
 		"no-duplicate-variable": true,
 		"no-unused-variable": false,
@@ -18,38 +12,17 @@
 		"arrow-parens": false,
 		"no-var-requires": false,
 		"space-before-function-paren": false,
-		"no-consecutive-blank-lines": [
-			true,
-			2
-		],
-		"ordered-imports": [
-			false
-		],
-		"no-console": [
-			false
-		],
-		"interface-name": [
-			false
-		],
-		"member-access": [
-			false
-		],
+		"no-consecutive-blank-lines": [true, 2],
+		"ordered-imports": [false],
+		"no-console": [false],
+		"interface-name": [false],
+		"member-access": [false],
 		"curly": true,
 		"class-name": true,
-		"semicolon": [
-			true,
-			"always"
-		],
+		"semicolon": [true, "always"],
 		"triple-equals": true,
-		"quotemark": [
-			true,
-			"single",
-			"jsx-double"
-		],
-		"max-line-length": [
-			true,
-			80
-		],
+		"quotemark": [true, "single", "jsx-double"],
+		"max-line-length": [true, 80],
 		"trailing-comma": [
 			true,
 			{
