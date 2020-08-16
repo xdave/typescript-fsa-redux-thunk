@@ -13,5 +13,4 @@ lib-cov
 coverage
 .nyc_output
 coverage.*
-.vscode/
 .npmrc
