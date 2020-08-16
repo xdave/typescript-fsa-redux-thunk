@@ -23,10 +23,10 @@
     "clean": "rimraf lib .nyc_output coverage",
     "format": "prettier --write .",
     "lint": "eslint --ext .ts .",
+    "prepublishOnly": "npm run build:lib",
     "test": "env-cmd -e mocha nyc mocha",
     "posttest": "test $CI && codecov -f coverage/*.json || true",
-    "test:watch": "npm test -- --reporter min --watch src/**/*.ts --watch-extensions ts",
-    "prepublishOnly": "npm run build:lib"
+    "test:watch": "npm test -- --reporter min --watch src/**/*.ts --watch-extensions ts"
   },
   "devDependencies": {
     "@types/chai": "^4.2.12",
