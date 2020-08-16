@@ -24,12 +24,17 @@ export type MaybePromise<T> = T | PromiseLike<T>;
  * A redux-thunk with the params as the first argument.  You don't have to
  * return a promise; but, the result of the dispatch will be one.
  */
-export type AsyncWorker<P, R, S = DefaultRootState, A = unknown> = (
-  params: P,
-  dispatch: ThunkDispatch<S, A, AnyAction>,
-  getState: () => S,
-  extraArgument: A,
-) => MaybePromise<R>;
+export type AsyncWorker<
+  InputType,
+  ReturnType,
+  State = DefaultRootState,
+  Extra = unknown
+> = (
+  params: InputType,
+  dispatch: ThunkDispatch<State, Extra, AnyAction>,
+  getState: () => State,
+  extraArgument: Extra,
+) => MaybePromise<ReturnType>;
 
 /** Workaround for typescript-fsa issue #77 */
 export type ThunkReturnType<T> = T extends void
@@ -38,9 +43,15 @@ export type ThunkReturnType<T> = T extends void
   ? PromiseLike<T>
   : T;
 
-type SmartThunkFunction<S, P, R, E, A> = unknown extends P
-  ? ThunkFunctionWithoutParams<S, ThunkReturnType<R>, E, A>
-  : ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
+type SmartThunkFunction<
+  State,
+  InputType,
+  ReturnType,
+  Error,
+  Extra
+> = unknown extends InputType
+  ? ThunkFunctionWithoutParams<ThunkReturnType<ReturnType>, State, Error, Extra>
+  : ThunkFunction<InputType, ThunkReturnType<ReturnType>, State, Error, Extra>;
 
 /**
  * Factory function to easily create a thunk
@@ -50,17 +61,25 @@ type SmartThunkFunction<S, P, R, E, A> = unknown extends P
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-export const asyncFactory = <S = DefaultRootState, A = unknown>(
+export const asyncFactory = <State = DefaultRootState, Extra = unknown>(
   factory: ActionCreatorFactory,
   resolve: () => PromiseLike<void> = Promise.resolve.bind(Promise),
-) => <P, R, E = unknown>(
+) => <InputType, ReturnType, Errror = unknown>(
   type: string,
-  worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
+  worker: AsyncWorker<InputType, ThunkReturnType<ReturnType>, State, Extra>,
   commonMeta?: Meta,
-) => {
-  type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
-  const async = factory.async<P, ThunkReturnType<R>, E>(type, commonMeta);
+): SmartThunkFunction<InputType, ReturnType, State, Errror, Extra> => {
+  type Procedure = ThunkFunction<
+    InputType,
+    ThunkReturnType<ReturnType>,
+    State,
+    Errror,
+    Extra
+  >;
+  const async = factory.async<InputType, ThunkReturnType<ReturnType>, Errror>(
+    type,
+    commonMeta,
+  );
   const fn: Procedure = (params) => (dispatch, getState, extraArgument) =>
     resolve()
       .then(() => {
@@ -79,37 +98,58 @@ export const asyncFactory = <S = DefaultRootState, A = unknown>(
       );
   fn.action = (params) => fn(params);
   fn.async = async;
-  return (fn as unknown) as SmartThunkFunction<S, P, R, E, A>;
+  return (fn as unknown) as SmartThunkFunction<
+    InputType,
+    ReturnType,
+    State,
+    Errror,
+    Extra
+  >;
 };
 /* eslint-enable @typescript-eslint/explicit-module-boundary-types */
 
-export type ThunkFunctionAction<S, A, R> = (
-  dispatch: ThunkDispatch<S, A, AnyAction>,
-  getState: () => S,
-  extraArgument: A,
-) => PromiseLike<R>;
+export type ThunkFunctionAction<
+  ReturnType,
+  State = DefaultRootState,
+  Extra = unknown
+> = (
+  dispatch: ThunkDispatch<State, Extra, AnyAction>,
+  getState: () => State,
+  extraArgument: Extra,
+) => PromiseLike<ReturnType>;
 
-export interface ThunkFunction<S, P, R, E, A> {
-  (params: P): ThunkFunctionAction<S, A, R>;
-  action(params: P): ThunkFunctionAction<S, A, R>;
-  // tslint:disable-next-line: member-ordering
-  async: AsyncActionCreators<P, R, E>;
+export interface ThunkFunction<
+  InputType,
+  ReturnType,
+  State = DefaultRootState,
+  Error = unknown,
+  Extra = unknown
+> {
+  (params: InputType): ThunkFunctionAction<ReturnType, State, Extra>;
+  action(params: InputType): ThunkFunctionAction<ReturnType, State, Extra>;
+  async: AsyncActionCreators<InputType, ReturnType, Error>;
 }
 
-export interface ThunkFunctionWithoutParams<S, R, E, A> {
-  (): ThunkFunctionAction<S, A, R>;
-  action(): ThunkFunctionAction<S, A, R>;
-  // tslint:disable-next-line: member-ordering
-  async: AsyncActionCreators<unknown, R, E>;
+export interface ThunkFunctionWithoutParams<
+  ReturnType,
+  State = DefaultRootState,
+  Error = unknown,
+  Extra = unknown
+> {
+  (): ThunkFunctionAction<ReturnType, State, Extra>;
+  action(): ThunkFunctionAction<ReturnType, State, Extra>;
+  async: AsyncActionCreators<unknown, ReturnType, Error>;
 }
 
 /** Utility type for a function that takes paras and returns a redux-thunk */
-export type ThunkCreator<P, R, S = DefaultRootState> = (
-  params?: P,
-) => ThunkAction<PromiseLike<R>, S, unknown, AnyAction>;
+export type ThunkCreator<InputType, ReturnType, State = DefaultRootState> = (
+  params?: InputType,
+) => ThunkAction<PromiseLike<ReturnType>, State, unknown, AnyAction>;
 
 /** The result type for thunkToAction below */
-export type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
+export type ThunkFn<InputType, ReturnType> = (
+  params?: InputType,
+) => PromiseLike<ReturnType>;
 
 /**
  * Passing the result of this to bindActionCreators and then calling the result
@@ -118,10 +158,10 @@ export type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
  * @param thunkCreator The thunk action creator
  * @returns thunkAction as if it was bound
  */
-export function thunkToAction<P, R, S = DefaultRootState>(
-  thunkCreator: ThunkCreator<P, R, S>,
-): ThunkFn<P, R> {
-  return (thunkCreator as unknown) as ThunkFn<P, R>;
+export function thunkToAction<InputType, ReturnType, State = DefaultRootState>(
+  thunkCreator: ThunkCreator<InputType, ReturnType, State>,
+): ThunkFn<InputType, ReturnType> {
+  return (thunkCreator as unknown) as ThunkFn<InputType, ReturnType>;
 }
 
 export default asyncFactory;

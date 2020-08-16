@@ -6,23 +6,21 @@
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-export const asyncFactory = (create, resolve = Promise.resolve.bind(Promise)) => (type, worker, commonMeta) => {
-    const async = create.async(type, commonMeta);
+export const asyncFactory = (factory, resolve = Promise.resolve.bind(Promise)) => (type, worker, commonMeta) => {
+    const async = factory.async(type, commonMeta);
     const fn = (params) => (dispatch, getState, extraArgument) => resolve()
         .then(() => {
         dispatch(async.started(params));
     })
         .then(() => worker(params, dispatch, getState, extraArgument))
         .then((result) => {
-        dispatch(async.done({ params: params, result }));
+        dispatch(async.done({ params, result }));
         return result;
     }, (error) => {
-        dispatch(async.failed({ params: params, error }));
+        dispatch(async.failed({ params, error }));
         throw error;
     });
-    fn.action = fn;
+    fn.action = (params) => fn(params);
     fn.async = async;
     return fn;
 };
