@@ -1,19 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "lib": ["dom", "esnext"],
+    "target": "ES5",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": ["ESNext"],
     "declaration": true,
     "declarationMap": true,
     "outDir": "lib",
     "strict": true,
-    "strictFunctionTypes": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
     "noUnusedLocals": true,
-    "alwaysStrict": true,
     "sourceMap": true,
     "esModuleInterop": true
   },

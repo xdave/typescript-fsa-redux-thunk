@@ -16,15 +16,16 @@
   "license": "MIT",
   "author": "Dave Gradwell <deft.productions@gmail.com>",
   "main": "lib/index.js",
+  "module": "esm/index.js",
   "scripts": {
     "build": "npm run build:lib",
-    "build:lib": "tsc",
+    "build:lib": "tsc && tsc -p tsconfig.esm.json",
     "clean": "rimraf lib .nyc_output coverage",
     "format": "prettier --write .",
     "lint": "eslint --ext .ts .",
     "test": "env-cmd -e mocha nyc mocha",
     "posttest": "test $CI && codecov -f coverage/*.json || true",
-    "test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts",
+    "test:watch": "npm test -- --reporter min --watch src/**/*.ts --watch-extensions ts",
     "prepublishOnly": "npm run build:lib"
   },
   "dependencies": {

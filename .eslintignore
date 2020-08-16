@@ -1,4 +1,5 @@
 /.nyc_output
 /coverage
 /lib
+/esm
 /node_modules
