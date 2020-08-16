@@ -28,10 +28,6 @@
     "test:watch": "npm test -- --reporter min --watch src/**/*.ts --watch-extensions ts",
     "prepublishOnly": "npm run build:lib"
   },
-  "dependencies": {
-    "redux-thunk": "^2.3.0",
-    "typescript-fsa": "^3.0.0"
-  },
   "devDependencies": {
     "@types/chai": "^4.2.12",
     "@types/mocha": "^8.0.2",
@@ -50,13 +46,16 @@
     "prettier": "^2.0.5",
     "redux": "^4.0.5",
     "redux-mock-store": "^1.5.4",
+    "redux-thunk": "^2.3.0",
     "rimraf": "^3.0.2",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7",
+    "typescript-fsa": "^3.0.0",
     "typescript-fsa-reducers": "^1.2.2"
   },
   "peerDependencies": {
     "redux": ">=4.x",
-    "redux-thunk": "^2.3.x"
+    "redux-thunk": ">=2.3.x",
+    "typescript-fsa": ">=3.x"
   }
 }
