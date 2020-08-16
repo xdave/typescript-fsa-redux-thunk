@@ -7,7 +7,7 @@ import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import { thunkToAction, asyncFactory } from '.';
 
 interface Ext {
-  dispatch: ThunkDispatch<State, any, AnyAction>;
+  dispatch: ThunkDispatch<State, unknown, AnyAction>;
 }
 
 const fakeError = new Error('Fake Error');
@@ -51,7 +51,7 @@ const test3 = createAsync('test3', () => {
 
 const test4 = createAsync<Params, Succ, Error>(
   'test4',
-  async ({ param }, dispatch, getState) => {
+  async ({ param }, dispatch) => {
     await dispatch(test1({ param }));
     await dispatch(test2());
     try {

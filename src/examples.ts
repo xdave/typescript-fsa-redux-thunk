@@ -1,8 +1,8 @@
 import 'isomorphic-fetch';
-import { createStore, applyMiddleware, AnyAction } from 'redux';
+import { AnyAction, applyMiddleware, createStore } from 'redux';
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk';
-import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
+import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import { asyncFactory } from '.';
 
 /** You can optionally use custom Error types */

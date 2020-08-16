@@ -1,8 +1,5 @@
 import actionCreatorFactory from 'typescript-fsa';
-import {
-  reducerWithoutInitialState,
-  reducerWithInitialState,
-} from 'typescript-fsa-reducers';
+import { reducerWithInitialState, reducerWithoutInitialState } from 'typescript-fsa-reducers';
 import { asyncFactory } from '.';
 
 interface TestState {

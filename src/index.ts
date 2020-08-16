@@ -1,19 +1,18 @@
-import { ThunkDispatch, ThunkAction } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import {
   ActionCreatorFactory,
   AnyAction,
   AsyncActionCreators,
-  Meta,
+  Meta
 } from 'typescript-fsa';
 
-/* tslint:disable */
 /**
  * This interface can be augmented by users to add default types for the root state when
  * using `typescript-fsa-redux-thunk`.
  * Use module augmentation to append your own type definition in a your_custom_type.d.ts file.
  * https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation
  */
-/* tslint:enable */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DefaultRootState {}
 
 /**
@@ -47,9 +46,11 @@ export type ThunkReturnType<T> = T extends void
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 export const asyncFactory = <S = DefaultRootState, A = unknown>(
   create: ActionCreatorFactory,
-  resolve: () => Promise<void> = Promise.resolve.bind(Promise),
+  resolve: typeof Promise.resolve = Promise.resolve.bind(Promise),
 ) => <P, R, E = unknown>(
   type: string,
   worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
@@ -75,6 +76,8 @@ export const asyncFactory = <S = DefaultRootState, A = unknown>(
   fn.async = async;
   return fn;
 };
+/* eslint-enable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-enable @typescript-eslint/no-non-null-assertion */
 
 export interface ThunkFunction<S, P, R, E, A> {
   (params?: P): (
@@ -102,8 +105,10 @@ export type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
  * @param thunkCreator The thunk action creator
  * @returns thunkAction as if it was bound
  */
-export const thunkToAction = <P, R, S = DefaultRootState>(
+export function thunkToAction<P, R, S = DefaultRootState>(
   thunkCreator: ThunkCreator<P, R, S>,
-): ThunkFn<P, R> => thunkCreator as any;
+): ThunkFn<P, R> {
+  return (thunkCreator as unknown) as ThunkFn<P, R>;
+}
 
 export default asyncFactory;
