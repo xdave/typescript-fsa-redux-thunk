@@ -38,6 +38,10 @@ export type ThunkReturnType<T> = T extends void
   ? PromiseLike<T>
   : T;
 
+type SmartThunkFunction<S, P, R, E, A> = unknown extends P
+  ? ThunkFunctionWithoutParams<S, ThunkReturnType<R>, E, A>
+  : ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
+
 /**
  * Factory function to easily create a thunk
  * @param factory typescript-fsa action creator factory
@@ -47,9 +51,8 @@ export type ThunkReturnType<T> = T extends void
  * And returns object with the async actions and the thunk itself
  */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 export const asyncFactory = <S = DefaultRootState, A = unknown>(
-  create: ActionCreatorFactory,
+  factory: ActionCreatorFactory,
   resolve: () => PromiseLike<void> = Promise.resolve.bind(Promise),
 ) => <P, R, E = unknown>(
   type: string,
@@ -57,39 +60,47 @@ export const asyncFactory = <S = DefaultRootState, A = unknown>(
   commonMeta?: Meta,
 ) => {
   type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
-  const async = create.async<P, ThunkReturnType<R>, E>(type, commonMeta);
+  const async = factory.async<P, ThunkReturnType<R>, E>(type, commonMeta);
   const fn: Procedure = (params) => (dispatch, getState, extraArgument) =>
     resolve()
       .then(() => {
-        dispatch(async.started(params!));
+        dispatch(async.started(params));
       })
-      .then(() => worker(params!, dispatch, getState, extraArgument))
+      .then(() => worker(params, dispatch, getState, extraArgument))
       .then(
         (result) => {
-          dispatch(async.done({ params: params!, result }));
+          dispatch(async.done({ params, result }));
           return result;
         },
         (error) => {
-          dispatch(async.failed({ params: params!, error }));
+          dispatch(async.failed({ params, error }));
           throw error;
         },
       );
   fn.action = fn;
   fn.async = async;
-  return fn;
+  return (fn as unknown) as SmartThunkFunction<S, P, R, E, A>;
 };
 /* eslint-enable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-enable @typescript-eslint/no-non-null-assertion */
+
+export type ThunkFunctionAction<S, A, R> = (
+  dispatch: ThunkDispatch<S, A, AnyAction>,
+  getState: () => S,
+  extraArgument: A,
+) => PromiseLike<R>;
 
 export interface ThunkFunction<S, P, R, E, A> {
-  (params?: P): (
-    dispatch: ThunkDispatch<S, A, AnyAction>,
-    getState: () => S,
-    extraArgument: A,
-  ) => PromiseLike<R>;
-  action(params?: P): ReturnType<this>;
+  (params: P): ThunkFunctionAction<S, A, R>;
+  action(params: P): ThunkFunctionAction<S, A, R>;
   // tslint:disable-next-line: member-ordering
   async: AsyncActionCreators<P, R, E>;
+}
+
+export interface ThunkFunctionWithoutParams<S, R, E, A> {
+  (): ThunkFunctionAction<S, A, R>;
+  action(): ThunkFunctionAction<S, A, R>;
+  // tslint:disable-next-line: member-ordering
+  async: AsyncActionCreators<unknown, R, E>;
 }
 
 /** Utility type for a function that takes paras and returns a redux-thunk */
