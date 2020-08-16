@@ -3,7 +3,7 @@ import type {
   ActionCreatorFactory,
   AnyAction,
   AsyncActionCreators,
-  Meta
+  Meta,
 } from 'typescript-fsa';
 
 /**
@@ -50,7 +50,7 @@ export type ThunkReturnType<T> = T extends void
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 export const asyncFactory = <S = DefaultRootState, A = unknown>(
   create: ActionCreatorFactory,
-  resolve: typeof Promise.resolve = Promise.resolve.bind(Promise),
+  resolve: () => PromiseLike<void> = Promise.resolve.bind(Promise),
 ) => <P, R, E = unknown>(
   type: string,
   worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
@@ -64,14 +64,16 @@ export const asyncFactory = <S = DefaultRootState, A = unknown>(
         dispatch(async.started(params!));
       })
       .then(() => worker(params!, dispatch, getState, extraArgument))
-      .then((result) => {
-        dispatch(async.done({ params: params!, result }));
-        return result;
-      })
-      .catch((error) => {
-        dispatch(async.failed({ params: params!, error }));
-        throw error;
-      });
+      .then(
+        (result) => {
+          dispatch(async.done({ params: params!, result }));
+          return result;
+        },
+        (error) => {
+          dispatch(async.failed({ params: params!, error }));
+          throw error;
+        },
+      );
   fn.action = fn;
   fn.async = async;
   return fn;
@@ -84,7 +86,7 @@ export interface ThunkFunction<S, P, R, E, A> {
     dispatch: ThunkDispatch<S, A, AnyAction>,
     getState: () => S,
     extraArgument: A,
-  ) => Promise<R>;
+  ) => PromiseLike<R>;
   action(params?: P): ReturnType<this>;
   // tslint:disable-next-line: member-ordering
   async: AsyncActionCreators<P, R, E>;
