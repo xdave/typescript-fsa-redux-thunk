@@ -78,8 +78,6 @@
     "redux-mock-store": "^1.5.4",
     "rimraf": "^3.0.2",
     "ts-node": "^8.10.2",
-    "tslib": "^2.0.1",
-    "tslint": "^5.20.1",
     "typescript": "^3.9.7",
     "typescript-fsa-reducers": "^1.2.2"
   },
