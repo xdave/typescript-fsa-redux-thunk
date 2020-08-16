@@ -1,5 +1,5 @@
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import {
+import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import type {
   ActionCreatorFactory,
   AnyAction,
   AsyncActionCreators,
