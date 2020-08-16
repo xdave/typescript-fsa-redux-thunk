@@ -1,5 +1,5 @@
 {
-	"require": "ts-node/register",
-	"exclude": ["src/examples.ts"],
-	"spec": "src/**/*.ts"
+  "require": "ts-node/register",
+  "exclude": ["src/examples.ts"],
+  "spec": "src/**/*.ts"
 }

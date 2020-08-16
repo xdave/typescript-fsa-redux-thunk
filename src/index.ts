@@ -1,9 +1,9 @@
 import { ThunkDispatch, ThunkAction } from 'redux-thunk';
 import {
-	ActionCreatorFactory,
-	AnyAction,
-	AsyncActionCreators,
-	Meta,
+  ActionCreatorFactory,
+  AnyAction,
+  AsyncActionCreators,
+  Meta,
 } from 'typescript-fsa';
 
 /* tslint:disable */
@@ -26,18 +26,18 @@ export type MaybePromise<T> = T | PromiseLike<T>;
  * return a promise; but, the result of the dispatch will be one.
  */
 export type AsyncWorker<P, R, S = DefaultRootState, A = unknown> = (
-	params: P,
-	dispatch: ThunkDispatch<S, A, AnyAction>,
-	getState: () => S,
-	extraArgument: A,
+  params: P,
+  dispatch: ThunkDispatch<S, A, AnyAction>,
+  getState: () => S,
+  extraArgument: A,
 ) => MaybePromise<R>;
 
 /** Workaround for typescript-fsa issue #77 */
 export type ThunkReturnType<T> = T extends void
-	? unknown
-	: T extends PromiseLike<T>
-	? PromiseLike<T>
-	: T;
+  ? unknown
+  : T extends PromiseLike<T>
+  ? PromiseLike<T>
+  : T;
 
 /**
  * Factory function to easily create a thunk
@@ -48,48 +48,48 @@ export type ThunkReturnType<T> = T extends void
  * And returns object with the async actions and the thunk itself
  */
 export const asyncFactory = <S = DefaultRootState, A = unknown>(
-	create: ActionCreatorFactory,
-	resolve: () => Promise<void> = Promise.resolve.bind(Promise),
+  create: ActionCreatorFactory,
+  resolve: () => Promise<void> = Promise.resolve.bind(Promise),
 ) => <P, R, E = unknown>(
-	type: string,
-	worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
-	commonMeta?: Meta,
+  type: string,
+  worker: AsyncWorker<P, ThunkReturnType<R>, S, A>,
+  commonMeta?: Meta,
 ) => {
-	type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
-	const async = create.async<P, ThunkReturnType<R>, E>(type, commonMeta);
-	const fn: Procedure = (params) => (dispatch, getState, extraArgument) =>
-		resolve()
-			.then(() => {
-				dispatch(async.started(params!));
-			})
-			.then(() => worker(params!, dispatch, getState, extraArgument))
-			.then((result) => {
-				dispatch(async.done({ params: params!, result }));
-				return result;
-			})
-			.catch((error) => {
-				dispatch(async.failed({ params: params!, error }));
-				throw error;
-			});
-	fn.action = fn;
-	fn.async = async;
-	return fn;
+  type Procedure = ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
+  const async = create.async<P, ThunkReturnType<R>, E>(type, commonMeta);
+  const fn: Procedure = (params) => (dispatch, getState, extraArgument) =>
+    resolve()
+      .then(() => {
+        dispatch(async.started(params!));
+      })
+      .then(() => worker(params!, dispatch, getState, extraArgument))
+      .then((result) => {
+        dispatch(async.done({ params: params!, result }));
+        return result;
+      })
+      .catch((error) => {
+        dispatch(async.failed({ params: params!, error }));
+        throw error;
+      });
+  fn.action = fn;
+  fn.async = async;
+  return fn;
 };
 
 export interface ThunkFunction<S, P, R, E, A> {
-	(params?: P): (
-		dispatch: ThunkDispatch<S, A, AnyAction>,
-		getState: () => S,
-		extraArgument: A,
-	) => Promise<R>;
-	action(params?: P): ReturnType<this>;
-	// tslint:disable-next-line: member-ordering
-	async: AsyncActionCreators<P, R, E>;
+  (params?: P): (
+    dispatch: ThunkDispatch<S, A, AnyAction>,
+    getState: () => S,
+    extraArgument: A,
+  ) => Promise<R>;
+  action(params?: P): ReturnType<this>;
+  // tslint:disable-next-line: member-ordering
+  async: AsyncActionCreators<P, R, E>;
 }
 
 /** Utility type for a function that takes paras and returns a redux-thunk */
 export type ThunkCreator<P, R, S = DefaultRootState> = (
-	params?: P,
+  params?: P,
 ) => ThunkAction<PromiseLike<R>, S, unknown, AnyAction>;
 
 /** The result type for thunkToAction below */
@@ -103,7 +103,7 @@ export type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
  * @returns thunkAction as if it was bound
  */
 export const thunkToAction = <P, R, S = DefaultRootState>(
-	thunkCreator: ThunkCreator<P, R, S>,
+  thunkCreator: ThunkCreator<P, R, S>,
 ): ThunkFn<P, R> => thunkCreator as any;
 
 export default asyncFactory;
