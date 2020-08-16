@@ -3,7 +3,7 @@ import { AnyAction, applyMiddleware, createStore } from 'redux';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
-import { asyncFactory } from '.';
+import { asyncFactory } from './index';
 
 /** Let this represent the thing we want as the extraArgument */
 const FAKE_THING = { fake: 'thing' };

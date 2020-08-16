@@ -1,6 +1,9 @@
 import actionCreatorFactory from 'typescript-fsa';
-import { reducerWithInitialState, reducerWithoutInitialState } from 'typescript-fsa-reducers';
-import { asyncFactory } from '.';
+import {
+  reducerWithInitialState,
+  reducerWithoutInitialState,
+} from 'typescript-fsa-reducers';
+import { asyncFactory } from './index';
 
 interface TestState {
   foo: string;

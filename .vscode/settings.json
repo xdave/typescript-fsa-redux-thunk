@@ -4,7 +4,6 @@
     "source.fixAll": true
   },
   "files.associations": {
-    ".nycrc": "json",
     ".prettierignore": "ignore"
   }
 }

@@ -1,0 +1,11 @@
+{
+  "extension": [".ts"],
+  "require": ["ts-node/register"],
+  "reporter": ["text-summary", "html", "json"],
+
+  "sourceMap": true,
+  "instrument": true,
+
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts", "src/examples.ts", "node_modules"]
+}

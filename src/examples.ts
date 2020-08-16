@@ -3,7 +3,7 @@ import { AnyAction, applyMiddleware, createStore } from 'redux';
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk';
 import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
-import { asyncFactory } from '.';
+import { asyncFactory } from './index';
 
 /** You can optionally use custom Error types */
 class CustomError extends Error {}
