@@ -52,7 +52,7 @@ const test3 = createAsync('test3', () => {
 const test4 = createAsync<Params, Succ, Error>(
   'test4',
   async ({ param }, dispatch) => {
-    await dispatch(test1({ param }));
+    await dispatch(test1.action({ param }));
     await dispatch(test2());
     try {
       await dispatch(test3());

@@ -77,7 +77,7 @@ export const asyncFactory = <S = DefaultRootState, A = unknown>(
           throw error;
         },
       );
-  fn.action = fn;
+  fn.action = (params) => fn(params);
   fn.async = async;
   return (fn as unknown) as SmartThunkFunction<S, P, R, E, A>;
 };
