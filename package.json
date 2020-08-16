@@ -16,43 +16,16 @@
   "license": "MIT",
   "author": "Dave Gradwell <deft.productions@gmail.com>",
   "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "src"
-  ],
   "scripts": {
-    "build": "npm -s run build:lib",
+    "build": "npm run build:lib",
     "build:lib": "tsc",
     "clean": "rimraf lib .nyc_output coverage",
     "format": "prettier --write .",
     "lint": "eslint --ext .ts .",
     "test": "env-cmd -e mocha nyc mocha",
     "posttest": "test $CI && codecov -f coverage/*.json || true",
-    "test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts"
-  },
-  "nyc": {
-    "exclude": [
-      "src/**/*.spec.ts",
-      "src/examples.ts",
-      "node_modules"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "include": [
-      "src/**/*.ts"
-    ],
-    "instrument": true,
-    "reporter": [
-      "text-summary",
-      "html",
-      "json"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "sourceMap": true
+    "test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts",
+    "prepublishOnly": "npm run build:lib"
   },
   "dependencies": {
     "redux-thunk": "^2.3.0",

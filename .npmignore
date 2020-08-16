@@ -1,0 +1,6 @@
+.*
+coverage
+LICENSE.md
+README.md
+tsconfig.json
+tsconfig.tests.json

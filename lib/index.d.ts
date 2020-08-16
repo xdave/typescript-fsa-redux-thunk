@@ -1,5 +1,5 @@
-import { ThunkDispatch, ThunkAction } from 'redux-thunk';
-import { ActionCreatorFactory, AnyAction, AsyncActionCreators } from 'typescript-fsa';
+import type { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import type { ActionCreatorFactory, AnyAction, AsyncActionCreators } from 'typescript-fsa';
 /**
  * This interface can be augmented by users to add default types for the root state when
  * using `typescript-fsa-redux-thunk`.
@@ -27,11 +27,11 @@ export declare type ThunkReturnType<T> = T extends void ? unknown : T extends Pr
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export declare const asyncFactory: <S = DefaultRootState, A = unknown>(create: ActionCreatorFactory, resolve?: () => Promise<void>) => <P, R, E = unknown>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S, A>, commonMeta?: {
+export declare const asyncFactory: <S = DefaultRootState, A = unknown>(create: ActionCreatorFactory, resolve?: () => PromiseLike<void>) => <P, R, E = unknown>(type: string, worker: AsyncWorker<P, ThunkReturnType<R>, S, A>, commonMeta?: {
     [key: string]: any;
 } | null | undefined) => ThunkFunction<S, P, ThunkReturnType<R>, E, A>;
 export interface ThunkFunction<S, P, R, E, A> {
-    (params?: P): (dispatch: ThunkDispatch<S, A, AnyAction>, getState: () => S, extraArgument: A) => Promise<R>;
+    (params?: P): (dispatch: ThunkDispatch<S, A, AnyAction>, getState: () => S, extraArgument: A) => PromiseLike<R>;
     action(params?: P): ReturnType<this>;
     async: AsyncActionCreators<P, R, E>;
 }
@@ -46,6 +46,6 @@ export declare type ThunkFn<P, R> = (params?: P) => PromiseLike<R>;
  * @param thunkCreator The thunk action creator
  * @returns thunkAction as if it was bound
  */
-export declare const thunkToAction: <P, R, S = DefaultRootState>(thunkCreator: ThunkCreator<P, R, S>) => ThunkFn<P, R>;
+export declare function thunkToAction<P, R, S = DefaultRootState>(thunkCreator: ThunkCreator<P, R, S>): ThunkFn<P, R>;
 export default asyncFactory;
 //# sourceMappingURL=index.d.ts.map
