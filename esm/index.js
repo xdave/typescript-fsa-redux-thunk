@@ -6,23 +6,28 @@
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export const asyncFactory = (factory, resolve = Promise.resolve.bind(Promise)) => (type, worker, commonMeta) => {
-    const async = factory.async(type, commonMeta);
-    const fn = (params) => (dispatch, getState, extraArgument) => resolve()
-        .then(() => {
-        dispatch(async.started(params));
-    })
-        .then(() => worker(params, dispatch, getState, extraArgument))
-        .then((result) => {
-        dispatch(async.done({ params, result }));
-        return result;
-    }, (error) => {
-        dispatch(async.failed({ params, error }));
-        throw error;
-    });
-    fn.action = (params) => fn(params);
-    fn.async = async;
-    return fn;
+export var asyncFactory = function (factory, resolve) {
+    if (resolve === void 0) { resolve = Promise.resolve.bind(Promise); }
+    return function (type, worker, commonMeta) {
+        var async = factory.async(type, commonMeta);
+        var fn = function (params) { return function (dispatch, getState, extraArgument) {
+            return resolve()
+                .then(function () {
+                dispatch(async.started(params));
+            })
+                .then(function () { return worker(params, dispatch, getState, extraArgument); })
+                .then(function (result) {
+                dispatch(async.done({ params: params, result: result }));
+                return result;
+            }, function (error) {
+                dispatch(async.failed({ params: params, error: error }));
+                throw error;
+            });
+        }; };
+        fn.action = function (params) { return fn(params); };
+        fn.async = async;
+        return fn;
+    };
 };
 /**
  * Passing the result of this to bindActionCreators and then calling the result

@@ -64,19 +64,19 @@ type SmartThunkFunction<
 export const asyncFactory = <State = DefaultRootState, Extra = unknown>(
   factory: ActionCreatorFactory,
   resolve: () => PromiseLike<void> = Promise.resolve.bind(Promise),
-) => <InputType, ReturnType, Errror = unknown>(
+) => <InputType, ReturnType, Error = unknown>(
   type: string,
   worker: AsyncWorker<InputType, ThunkReturnType<ReturnType>, State, Extra>,
   commonMeta?: Meta,
-): SmartThunkFunction<InputType, ReturnType, State, Errror, Extra> => {
+): SmartThunkFunction<State, InputType, ReturnType, Error, Extra> => {
   type Procedure = ThunkFunction<
     InputType,
     ThunkReturnType<ReturnType>,
     State,
-    Errror,
+    Error,
     Extra
   >;
-  const async = factory.async<InputType, ThunkReturnType<ReturnType>, Errror>(
+  const async = factory.async<InputType, ThunkReturnType<ReturnType>, Error>(
     type,
     commonMeta,
   );
@@ -99,10 +99,10 @@ export const asyncFactory = <State = DefaultRootState, Extra = unknown>(
   fn.action = (params) => fn(params);
   fn.async = async;
   return (fn as unknown) as SmartThunkFunction<
+    State,
     InputType,
     ReturnType,
-    State,
-    Errror,
+    Error,
     Extra
   >;
 };

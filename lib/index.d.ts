@@ -28,9 +28,9 @@ declare type SmartThunkFunction<State, InputType, ReturnType, Error, Extra> = un
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export declare const asyncFactory: <State = DefaultRootState, Extra = unknown>(factory: ActionCreatorFactory, resolve?: () => PromiseLike<void>) => <InputType, ReturnType_1, Errror = unknown>(type: string, worker: AsyncWorker<InputType, ThunkReturnType<ReturnType_1>, State, Extra>, commonMeta?: {
+export declare const asyncFactory: <State = DefaultRootState, Extra = unknown>(factory: ActionCreatorFactory, resolve?: () => PromiseLike<void>) => <InputType, ReturnType_1, Error_1 = unknown>(type: string, worker: AsyncWorker<InputType, ThunkReturnType<ReturnType_1>, State, Extra>, commonMeta?: {
     [key: string]: any;
-} | null | undefined) => SmartThunkFunction<InputType, ReturnType_1, State, Errror, Extra>;
+} | null | undefined) => SmartThunkFunction<State, InputType, ReturnType_1, Error_1, Extra>;
 export declare type ThunkFunctionAction<ReturnType, State = DefaultRootState, Extra = unknown> = (dispatch: ThunkDispatch<State, Extra, AnyAction>, getState: () => State, extraArgument: Extra) => PromiseLike<ReturnType>;
 export interface ThunkFunction<InputType, ReturnType, State = DefaultRootState, Error = unknown, Extra = unknown> {
     (params: InputType): ThunkFunctionAction<ReturnType, State, Extra>;
