@@ -1,88 +1,61 @@
 {
-	"name": "typescript-fsa-redux-thunk",
-	"version": "2.1.9",
-	"description": "TypeScript FSA utilities for redux-thunk",
-	"keywords": [
-		"action",
-		"action creator",
-		"flux standard action",
-		"redux",
-		"redux-thunk",
-		"thunk",
-		"typescript",
-		"typescript-fsa"
-	],
-	"homepage": "https://github.com/xdave/typescript-fsa-redux-thunk",
-	"bugs": "https://github.com/xdave/typescript-fsa-redux-thunk/issues",
-	"repository": "xdave/typescript-fsa-redux-thunk",
-	"license": "MIT",
-	"author": "Dave Gradwell <deft.productions@gmail.com>",
-	"main": "lib/index.js",
-	"typings": "lib/index.d.ts",
-	"files": [
-		"lib",
-		"src"
-	],
-	"scripts": {
-		"build": "npm -s run build:lib",
-		"build:lib": "tsc",
-		"clean": "rimraf lib .nyc_output coverage",
-		"format": "prettier --write .",
-		"lint": "tslint -p .",
-		"test": "cross-env TS_NODE_PROJECT=tsconfig.tests.json nyc mocha",
-		"posttest": "test $CI && codecov -f coverage/*.json || true",
-		"test:watch": "npm -s t -- --reporter min --watch src/**/*.ts --watch-extensions ts"
-	},
-	"nyc": {
-		"exclude": [
-			"src/**/*.spec.ts",
-			"src/examples.ts",
-			"node_modules"
-		],
-		"extension": [
-			".ts"
-		],
-		"include": [
-			"src/**/*.ts"
-		],
-		"instrument": true,
-		"reporter": [
-			"text-summary",
-			"html",
-			"json"
-		],
-		"require": [
-			"ts-node/register"
-		],
-		"sourceMap": true
-	},
-	"dependencies": {
-		"redux-thunk": "^2.3.0",
-		"typescript-fsa": "^3.0.0"
-	},
-	"devDependencies": {
-		"@types/chai": "^4.2.12",
-		"@types/mocha": "^8.0.2",
-		"@types/node": "^14.0.27",
-		"@types/redux-mock-store": "^1.0.2",
-		"chai": "^4.2.0",
-		"codecov": "^3.7.2",
-		"cross-env": "^7.0.2",
-		"isomorphic-fetch": "^2.2.1",
-		"mocha": "^8.1.1",
-		"nyc": "^15.1.0",
-		"prettier": "^2.0.5",
-		"redux": "^4.0.5",
-		"redux-mock-store": "^1.5.4",
-		"rimraf": "^3.0.2",
-		"ts-node": "^8.10.2",
-		"tslib": "^2.0.1",
-		"tslint": "^5.20.1",
-		"typescript": "^3.9.7",
-		"typescript-fsa-reducers": "^1.2.2"
-	},
-	"peerDependencies": {
-		"redux": ">=4.x",
-		"redux-thunk": "^2.3.x"
-	}
+  "name": "typescript-fsa-redux-thunk",
+  "version": "2.1.9",
+  "description": "TypeScript FSA utilities for redux-thunk",
+  "keywords": [
+    "action",
+    "action creator",
+    "flux standard action",
+    "redux",
+    "redux-thunk",
+    "thunk",
+    "typescript",
+    "typescript-fsa"
+  ],
+  "repository": "https://github.com/xdave/typescript-fsa-redux-thunk",
+  "license": "MIT",
+  "author": "Dave Gradwell <deft.productions@gmail.com>",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "scripts": {
+    "build": "npm run build:lib",
+    "build:lib": "tsc && tsc -p tsconfig.esm.json",
+    "clean": "rimraf lib .nyc_output coverage",
+    "format": "prettier --write .",
+    "lint": "eslint --ext .ts .",
+    "prepublishOnly": "npm run build:lib",
+    "test": "env-cmd -e mocha nyc mocha",
+    "posttest": "test $CI && codecov -f coverage/*.json || true",
+    "test:watch": "npm test -- --reporter min --watch src/**/*.ts --watch-extensions ts"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.12",
+    "@types/mocha": "^8.0.2",
+    "@types/node": "^14.0.27",
+    "@types/redux-mock-store": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
+    "@typescript-eslint/parser": "^3.9.0",
+    "chai": "^4.2.0",
+    "codecov": "^3.7.2",
+    "env-cmd": "^10.1.0",
+    "eslint": "^7.7.0",
+    "eslint-config-prettier": "^6.11.0",
+    "isomorphic-fetch": "^2.2.1",
+    "mocha": "^8.1.1",
+    "nyc": "^15.1.0",
+    "prettier": "^2.0.5",
+    "redux": "^4.0.5",
+    "redux-mock-store": "^1.5.4",
+    "redux-thunk": "^2.3.0",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7",
+    "typescript-fsa": "^3.0.0",
+    "typescript-fsa-reducers": "^1.2.2"
+  },
+  "peerDependencies": {
+    "redux": ">=4.x",
+    "redux-thunk": ">=2.3.x",
+    "typescript-fsa": ">=3.x"
+  }
 }

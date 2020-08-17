@@ -1,66 +1,66 @@
 import actionCreatorFactory from 'typescript-fsa';
 import {
-	reducerWithoutInitialState,
-	reducerWithInitialState,
+  reducerWithInitialState,
+  reducerWithoutInitialState,
 } from 'typescript-fsa-reducers';
-import { asyncFactory } from '.';
+import { asyncFactory } from './index';
 
 interface TestState {
-	foo: string;
+  foo: string;
 }
 
 describe(`issue #17`, () => {
-	it(`should be able to return nothing (PromiseLike<void>)`, () => {
-		const create = actionCreatorFactory();
-		const createAsync = asyncFactory(create);
+  it(`should be able to return nothing (PromiseLike<void>)`, () => {
+    const create = actionCreatorFactory();
+    const createAsync = asyncFactory(create);
 
-		const example = createAsync('example', Promise.resolve);
+    const example = createAsync('example', Promise.resolve);
 
-		reducerWithoutInitialState().case(example.async.done, () => void 0);
-	});
+    reducerWithoutInitialState().case(example.async.done, () => void 0);
+  });
 
-	it(`should be able to return nothing (non-promise void)`, () => {
-		const create = actionCreatorFactory();
-		const createAsync = asyncFactory(create);
+  it(`should be able to return nothing (non-promise void)`, () => {
+    const create = actionCreatorFactory();
+    const createAsync = asyncFactory(create);
 
-		const example = createAsync('example', () => {
-			/* noop */
-		});
+    const example = createAsync('example', () => {
+      /* noop */
+    });
 
-		reducerWithoutInitialState().case(example.async.done, () => void 0);
-	});
+    reducerWithoutInitialState().case(example.async.done, () => void 0);
+  });
 
-	it(`should be able to run normally (returning PromiseLike<string>)`, () => {
-		const create = actionCreatorFactory();
-		const createAsync = asyncFactory<TestState>(create);
+  it(`should be able to run normally (returning PromiseLike<string>)`, () => {
+    const create = actionCreatorFactory();
+    const createAsync = asyncFactory<TestState>(create);
 
-		const example = createAsync(
-			'example',
-			async (bar: string, dispatch, getState) => {
-				return `${getState().foo} ${bar}`;
-			},
-		);
+    const example = createAsync(
+      'example',
+      async (bar: string, dispatch, getState) => {
+        return `${getState().foo} ${bar}`;
+      },
+    );
 
-		reducerWithInitialState({ foo: 'foo' }).case(
-			example.async.done,
-			(state, { result }) => ({ foo: result }),
-		);
-	});
+    reducerWithInitialState({ foo: 'foo' }).case(
+      example.async.done,
+      (state, { result }) => ({ foo: result }),
+    );
+  });
 
-	it(`should be able to run normally (returning non-promise string)`, () => {
-		const create = actionCreatorFactory();
-		const createAsync = asyncFactory<TestState>(create);
+  it(`should be able to run normally (returning non-promise string)`, () => {
+    const create = actionCreatorFactory();
+    const createAsync = asyncFactory<TestState>(create);
 
-		const example = createAsync(
-			'example',
-			(bar: string, dispatch, getState) => {
-				return `${getState().foo} ${bar}`;
-			},
-		);
+    const example = createAsync(
+      'example',
+      (bar: string, dispatch, getState) => {
+        return `${getState().foo} ${bar}`;
+      },
+    );
 
-		reducerWithoutInitialState().case(
-			example.async.done,
-			(state, { result }) => ({ foo: result }),
-		);
-	});
+    reducerWithoutInitialState().case(
+      example.async.done,
+      (state, { result }) => ({ foo: result }),
+    );
+  });
 });

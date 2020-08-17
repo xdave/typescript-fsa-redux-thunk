@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.thunkToAction = exports.asyncFactory = void 0;
 /**
  * Factory function to easily create a thunk
  * @param factory typescript-fsa action creator factory
@@ -9,7 +6,7 @@ exports.thunkToAction = exports.asyncFactory = void 0;
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-exports.asyncFactory = function (factory, resolve) {
+export var asyncFactory = function (factory, resolve) {
     if (resolve === void 0) { resolve = Promise.resolve.bind(Promise); }
     return function (type, worker, commonMeta) {
         var async = factory.async(type, commonMeta);
@@ -39,9 +36,8 @@ exports.asyncFactory = function (factory, resolve) {
  * @param thunkCreator The thunk action creator
  * @returns thunkAction as if it was bound
  */
-function thunkToAction(thunkCreator) {
+export function thunkToAction(thunkCreator) {
     return thunkCreator;
 }
-exports.thunkToAction = thunkToAction;
-exports.default = exports.asyncFactory;
+export default asyncFactory;
 //# sourceMappingURL=index.js.map
