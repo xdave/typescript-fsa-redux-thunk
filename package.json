@@ -1,6 +1,6 @@
 {
   "name": "typescript-fsa-redux-thunk",
-  "version": "2.1.9",
+  "version": "2.10.0",
   "description": "TypeScript FSA utilities for redux-thunk",
   "keywords": [
     "action",
