@@ -1,6 +1,6 @@
 {
   "name": "typescript-fsa-redux-thunk",
-  "version": "2.10.0",
+  "version": "2.10.1",
   "description": "TypeScript FSA utilities for redux-thunk",
   "keywords": [
     "action",
@@ -30,26 +30,27 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.12",
-    "@types/mocha": "^8.0.2",
-    "@types/node": "^14.0.27",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.11.2",
+    "@types/node-fetch": "^2.5.7",
     "@types/redux-mock-store": "^1.0.2",
-    "@typescript-eslint/eslint-plugin": "^3.9.0",
-    "@typescript-eslint/parser": "^3.9.0",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
     "chai": "^4.2.0",
     "codecov": "^3.7.2",
     "env-cmd": "^10.1.0",
-    "eslint": "^7.7.0",
+    "eslint": "^7.9.0",
     "eslint-config-prettier": "^6.11.0",
-    "isomorphic-fetch": "^2.2.1",
-    "mocha": "^8.1.1",
+    "mocha": "^8.1.3",
+    "node-fetch": "^2.6.1",
     "nyc": "^15.1.0",
-    "prettier": "^2.0.5",
+    "prettier": "^2.1.2",
     "redux": "^4.0.5",
     "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.3.0",
     "rimraf": "^3.0.2",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.7",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3",
     "typescript-fsa": "^3.0.0",
     "typescript-fsa-reducers": "^1.2.2"
   },
@@ -57,5 +58,6 @@
     "redux": ">=4.x",
     "redux-thunk": ">=2.3.x",
     "typescript-fsa": ">=3.x"
-  }
+  },
+  "dependencies": {}
 }
