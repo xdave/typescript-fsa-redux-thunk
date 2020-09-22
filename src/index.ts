@@ -18,7 +18,7 @@ export interface DefaultRootState {}
 /**
  * It's either a promise, or it isn't
  */
-export type MaybePromise<T> = T | PromiseLike<T>;
+export type MaybePromise<T> = T | Promise<T>;
 
 /**
  * A redux-thunk with the params as the first argument.  You don't have to
@@ -39,8 +39,8 @@ export type AsyncWorker<
 /** Workaround for typescript-fsa issue #77 */
 export type ThunkReturnType<T> = T extends void
   ? unknown
-  : T extends PromiseLike<T>
-  ? PromiseLike<T>
+  : T extends Promise<T>
+  ? Promise<T>
   : T;
 
 type SmartThunkFunction<
@@ -63,7 +63,7 @@ type SmartThunkFunction<
  */
 export const asyncFactory = <State = DefaultRootState, Extra = unknown>(
   factory: ActionCreatorFactory,
-  resolve: () => PromiseLike<void> = Promise.resolve.bind(Promise),
+  resolve: () => Promise<void> = Promise.resolve.bind(Promise),
 ) => <InputType, ReturnType, Error = unknown>(
   type: string,
   worker: AsyncWorker<InputType, ThunkReturnType<ReturnType>, State, Extra>,
@@ -116,7 +116,7 @@ export type ThunkFunctionAction<
   dispatch: ThunkDispatch<State, Extra, AnyAction>,
   getState: () => State,
   extraArgument: Extra,
-) => PromiseLike<ReturnType>;
+) => Promise<ReturnType>;
 
 export interface ThunkFunction<
   InputType,
@@ -144,12 +144,12 @@ export interface ThunkFunctionWithoutParams<
 /** Utility type for a function that takes paras and returns a redux-thunk */
 export type ThunkCreator<InputType, ReturnType, State = DefaultRootState> = (
   params?: InputType,
-) => ThunkAction<PromiseLike<ReturnType>, State, unknown, AnyAction>;
+) => ThunkAction<Promise<ReturnType>, State, unknown, AnyAction>;
 
 /** The result type for thunkToAction below */
 export type ThunkFn<InputType, ReturnType> = (
   params?: InputType,
-) => PromiseLike<ReturnType>;
+) => Promise<ReturnType>;
 
 /**
  * Passing the result of this to bindActionCreators and then calling the result

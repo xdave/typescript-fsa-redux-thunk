@@ -1,4 +1,4 @@
-import 'isomorphic-fetch';
+import fetch, { RequestInit } from 'node-fetch';
 import { AnyAction, applyMiddleware, createStore } from 'redux';
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk';
 import actionCreatorFactory from 'typescript-fsa';

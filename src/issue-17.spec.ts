@@ -10,7 +10,7 @@ interface TestState {
 }
 
 describe(`issue #17`, () => {
-  it(`should be able to return nothing (PromiseLike<void>)`, () => {
+  it(`should be able to return nothing (Promise<void>)`, () => {
     const create = actionCreatorFactory();
     const createAsync = asyncFactory(create);
 
@@ -30,7 +30,7 @@ describe(`issue #17`, () => {
     reducerWithoutInitialState().case(example.async.done, () => void 0);
   });
 
-  it(`should be able to run normally (returning PromiseLike<string>)`, () => {
+  it(`should be able to run normally (returning Promise<string>)`, () => {
     const create = actionCreatorFactory();
     const createAsync = asyncFactory<TestState>(create);
 
