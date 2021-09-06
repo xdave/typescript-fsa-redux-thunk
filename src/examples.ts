@@ -1,9 +1,12 @@
-import fetch, { RequestInit } from 'node-fetch';
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { AnyAction, applyMiddleware, createStore } from 'redux';
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk';
 import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import { asyncFactory } from './index';
+
+// https://github.com/node-fetch/node-fetch/issues/1266
+const fetch = require('node-fetch');
 
 /** You can optionally use custom Error types */
 class CustomError extends Error {}
@@ -41,7 +44,7 @@ const login = createAsync<LoginParams, UserToken, CustomError>(
   'Login',
   async (params, dispatch) => {
     const url = `https://reqres.in/api/login`;
-    const options: RequestInit = {
+    const options = {
       method: 'POST',
       body: JSON.stringify(params),
       headers: {
@@ -55,7 +58,7 @@ const login = createAsync<LoginParams, UserToken, CustomError>(
 
     dispatch(changeTitle('You are logged-in'));
 
-    return res.json();
+    return (await res.json()) as UserToken;
   },
 );
 
@@ -88,7 +91,8 @@ const reducer = reducerWithInitialState(initial)
     userToken,
     loggingIn: false,
     error: undefined,
-  }));
+  }))
+  .build();
 
 /** Putting it all together */
 (async () => {

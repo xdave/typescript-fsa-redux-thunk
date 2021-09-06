@@ -28,7 +28,7 @@ export type AsyncWorker<
   InputType,
   ReturnType,
   State = DefaultRootState,
-  Extra = unknown
+  Extra = unknown,
 > = (
   params: InputType,
   dispatch: ThunkDispatch<State, Extra, AnyAction>,
@@ -43,15 +43,21 @@ export type ThunkReturnType<T> = T extends void
   ? Promise<T>
   : T;
 
-type SmartThunkFunction<
-  State,
-  InputType,
-  ReturnType,
-  Error,
-  Extra
-> = unknown extends InputType
-  ? ThunkFunctionWithoutParams<ThunkReturnType<ReturnType>, State, Error, Extra>
-  : ThunkFunction<InputType, ThunkReturnType<ReturnType>, State, Error, Extra>;
+type SmartThunkFunction<State, InputType, ReturnType, Error, Extra> =
+  unknown extends InputType
+    ? ThunkFunctionWithoutParams<
+        ThunkReturnType<ReturnType>,
+        State,
+        Error,
+        Extra
+      >
+    : ThunkFunction<
+        InputType,
+        ThunkReturnType<ReturnType>,
+        State,
+        Error,
+        Extra
+      >;
 
 /**
  * Factory function to easily create a thunk
@@ -61,57 +67,59 @@ type SmartThunkFunction<
  *  - the your worker thunk function
  * And returns object with the async actions and the thunk itself
  */
-export const asyncFactory = <State = DefaultRootState, Extra = unknown>(
-  factory: ActionCreatorFactory,
-  resolve: () => Promise<void> = Promise.resolve.bind(Promise),
-) => <InputType, ReturnType, Error = unknown>(
-  type: string,
-  worker: AsyncWorker<InputType, ThunkReturnType<ReturnType>, State, Extra>,
-  commonMeta?: Meta,
-): SmartThunkFunction<State, InputType, ReturnType, Error, Extra> => {
-  type Procedure = ThunkFunction<
-    InputType,
-    ThunkReturnType<ReturnType>,
-    State,
-    Error,
-    Extra
-  >;
-  const async = factory.async<InputType, ThunkReturnType<ReturnType>, Error>(
-    type,
-    commonMeta,
-  );
-  const fn: Procedure = (params) => (dispatch, getState, extraArgument) =>
-    resolve()
-      .then(() => {
-        dispatch(async.started(params));
-      })
-      .then(() => worker(params, dispatch, getState, extraArgument))
-      .then(
-        (result) => {
-          dispatch(async.done({ params, result }));
-          return result;
-        },
-        (error) => {
-          dispatch(async.failed({ params, error }));
-          throw error;
-        },
-      );
-  fn.action = (params) => fn(params);
-  fn.async = async;
-  return (fn as unknown) as SmartThunkFunction<
-    State,
-    InputType,
-    ReturnType,
-    Error,
-    Extra
-  >;
-};
+export const asyncFactory =
+  <State = DefaultRootState, Extra = unknown>(
+    factory: ActionCreatorFactory,
+    resolve: () => Promise<void> = Promise.resolve.bind(Promise),
+  ) =>
+  <InputType, ReturnType, Error = unknown>(
+    type: string,
+    worker: AsyncWorker<InputType, ThunkReturnType<ReturnType>, State, Extra>,
+    commonMeta?: Meta,
+  ): SmartThunkFunction<State, InputType, ReturnType, Error, Extra> => {
+    type Procedure = ThunkFunction<
+      InputType,
+      ThunkReturnType<ReturnType>,
+      State,
+      Error,
+      Extra
+    >;
+    const async = factory.async<InputType, ThunkReturnType<ReturnType>, Error>(
+      type,
+      commonMeta,
+    );
+    const fn: Procedure = (params) => (dispatch, getState, extraArgument) =>
+      resolve()
+        .then(() => {
+          dispatch(async.started(params));
+        })
+        .then(() => worker(params, dispatch, getState, extraArgument))
+        .then(
+          (result) => {
+            dispatch(async.done({ params, result }));
+            return result;
+          },
+          (error) => {
+            dispatch(async.failed({ params, error }));
+            throw error;
+          },
+        );
+    fn.action = (params) => fn(params);
+    fn.async = async;
+    return fn as unknown as SmartThunkFunction<
+      State,
+      InputType,
+      ReturnType,
+      Error,
+      Extra
+    >;
+  };
 /* eslint-enable @typescript-eslint/explicit-module-boundary-types */
 
 export type ThunkFunctionAction<
   ReturnType,
   State = DefaultRootState,
-  Extra = unknown
+  Extra = unknown,
 > = (
   dispatch: ThunkDispatch<State, Extra, AnyAction>,
   getState: () => State,
@@ -123,7 +131,7 @@ export interface ThunkFunction<
   ReturnType,
   State = DefaultRootState,
   Error = unknown,
-  Extra = unknown
+  Extra = unknown,
 > {
   (params: InputType): ThunkFunctionAction<ReturnType, State, Extra>;
   action(params: InputType): ThunkFunctionAction<ReturnType, State, Extra>;
@@ -134,7 +142,7 @@ export interface ThunkFunctionWithoutParams<
   ReturnType,
   State = DefaultRootState,
   Error = unknown,
-  Extra = unknown
+  Extra = unknown,
 > {
   (): ThunkFunctionAction<ReturnType, State, Extra>;
   action(): ThunkFunctionAction<ReturnType, State, Extra>;
@@ -161,7 +169,7 @@ export type ThunkFn<InputType, ReturnType> = (
 export function thunkToAction<InputType, ReturnType, State = DefaultRootState>(
   thunkCreator: ThunkCreator<InputType, ReturnType, State>,
 ): ThunkFn<InputType, ReturnType> {
-  return (thunkCreator as unknown) as ThunkFn<InputType, ReturnType>;
+  return thunkCreator as unknown as ThunkFn<InputType, ReturnType>;
 }
 
 export default asyncFactory;

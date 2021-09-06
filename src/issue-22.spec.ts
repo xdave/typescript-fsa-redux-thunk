@@ -39,11 +39,8 @@ describe(`issue #22`, () => {
      * You need to cast the type here, as the overload for withExtraArgument
      * is completely useless.
      */
-    const middleware: ThunkMiddleware<
-      State,
-      AnyAction,
-      typeof FAKE_THING
-    > = thunk.withExtraArgument(FAKE_THING);
+    const middleware: ThunkMiddleware<State, AnyAction, typeof FAKE_THING> =
+      thunk.withExtraArgument(FAKE_THING);
 
     const store = createStore(reducer, applyMiddleware(middleware));
 
